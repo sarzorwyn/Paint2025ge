@@ -1,26 +1,41 @@
 "use client";
 
-import React, { useEffect, useRef, useState } from 'react';
+import React, { useCallback, useEffect, useRef, useState } from 'react';
 import mapboxgl from 'mapbox-gl';
 import 'mapbox-gl/dist/mapbox-gl.css';
 import * as TooltipPrimitive from "@radix-ui/react-tooltip";
 import { useMouse } from '../lib/useMouse';
 import { politicalParties } from '@/lib/politicalParties';
 import { MapLegend } from './mapLegend';
+import CirclePicker from './circlePicker';
+import { handleMapClick } from '@/handler/handleMapClick';
 
 
 const MapElement = () => {
   const mapContainerRef = useRef(null);
   const mapRef = useRef<mapboxgl.Map>(null); // <mapboxgl.Map | null>
   const {x, y, tooltipRef} = useMouse<HTMLDivElement>();
-  let hoveredPolygonId = null;
-  let selectedPolygonId = null;
+  let hoveredPolygonId: string | number | null  = null;
+  const selectedPolygonIdRef = useRef<null | string>(null);
   const [hoverDesc, setHoverDesc] = useState(null);
+  const [selectedParty, setSelectedParty] = useState(null);
+
+  const fillColorExpression = [
+    "match",
+    ["get", "party"],  // Get the "party" property from the feature
+    ...politicalParties.flatMap(({ label, hex }) => [label, hex]),
+    "#e0e0ff" // Default color if no match is found
+];
+
+// const fillColorExpression = [
+//   "match",
+//   ['string', ['feature-state', 'party'], 'WP'], '#EF4444',
+//   "#e0e0ff" // Default color if no match is found
+// ];
 
   useEffect(() => {
     mapboxgl.accessToken = process.env.NEXT_PUBLIC_MAPBOX_API;
     
-
     mapRef.current = new mapboxgl.Map({
       container: mapContainerRef.current,
       style: 'mapbox://styles/mapbox/empty-v9',
@@ -40,6 +55,17 @@ const MapElement = () => {
         promoteId: 'FID'
       });}
 
+      mapRef.current.addLayer({
+        id: 'background-layer',
+        type: 'background',
+        paint: {
+          'background-color': '#efefef',
+          'background-opacity': 1,
+        },
+      });
+
+      console.log(politicalParties.flatMap(({ label, hex }) => [label, hex]))
+
 
       mapRef.current.addLayer({
         id: 'elecBounds',
@@ -47,8 +73,8 @@ const MapElement = () => {
         source: 'elecBoundsSource',
         layout: {},
         paint: {
-          'fill-color': '#e0e0ff',
-          'fill-opacity': 0.3
+          'fill-color': fillColorExpression,
+          'fill-opacity': 0.5
         }
       });
 
@@ -64,48 +90,44 @@ const MapElement = () => {
       });
 
       mapRef.current.on('click', (e) => {
-        if (selectedPolygonId !== null) {
-          mapRef.current.setFeatureState(
-            { source: 'elecBoundsSource', id: selectedPolygonId },
-            { selected: false }
-          );
-        }
-      });
-
-      mapRef.current.on('click', 'elecBounds', (e) => {
-        
-
-        if (e && e.features.length > 0) {
-          selectedPolygonId = e.features[0].id;
-          mapRef.current.setFeatureState(
-            { source: 'elecBoundsSource', id: selectedPolygonId },
-            { selected: true }
-          );
-
-          mapRef.current.flyTo({
-            center: e.lngLat,
-            zoom: 10.9
-          });
-        } 
-      });
-
-      mapRef.current.on('mousemove', 'elecBounds', (e) => {
-        if (e.features.length > 0) {
-          mapRef.current.getCanvas().style.cursor = 'pointer';
-          if (hoveredPolygonId !== null) {
-            mapRef.current.setFeatureState(
-              { source: 'elecBoundsSource', id: hoveredPolygonId },
-              { hover: false }
-            );
+        const features =  mapRef.current.queryRenderedFeatures(e.point);
+        // If no features were clicked, it means the background was clicked
+          if (features.length === 0) {
+            setSelectedParty(null);
+            if (selectedPolygonIdRef.current !== null) {
+              mapRef.current.setFeatureState(
+                { source: 'elecBoundsSource', id: selectedPolygonIdRef.current },
+                { selected: false }
+              );
+              selectedPolygonIdRef.current = null;
+            }
           }
-          hoveredPolygonId = e.features[0].id;
+      });
+
+      if (selectedPolygonIdRef.current !== null) {
+        mapRef.current.setFeatureState(
+          { source: 'elecBoundsSource', id: selectedPolygonId },
+          { selected: false }
+        );
+      }
+    });
+
+    mapRef.current.on('mousemove', 'elecBounds', (e) => {
+      if (e.features.length > 0) {
+        mapRef.current.getCanvas().style.cursor = 'pointer';
+        if (hoveredPolygonId !== null) {
           mapRef.current.setFeatureState(
             { source: 'elecBoundsSource', id: hoveredPolygonId },
-            { hover: true }
+            { hover: false }
           );
-          setHoverDesc(e.features[0].properties.ED_DESC.toLowerCase().replace(/\b\w/g, s => s.toUpperCase()));
         }
-      });
+        hoveredPolygonId = e.features[0].id;
+        mapRef.current.setFeatureState(
+          { source: 'elecBoundsSource', id: hoveredPolygonId },
+          { hover: true }
+        );
+        setHoverDesc(e.features[0].properties.ED_DESC.toLowerCase().replace(/\b\w/g, s => s.toUpperCase()));
+      }
 
       mapRef.current.on('mouseleave', 'elecBounds', () => {
         mapRef.current.getCanvas().style.cursor = 'grab';
@@ -122,16 +144,38 @@ const MapElement = () => {
 
     });
   }, []);
+
+  const handlePickerSelect = useCallback((e: { currentTarget: { id: React.SetStateAction<null>; } | null; }) => {
+    if (e.currentTarget === null) {
+      setSelectedParty(null);
+    } else {
+      setSelectedParty(e.currentTarget.id);
+    }
+  }, []);
+
   
+
+  useEffect(() => {
+    mapRef.current.on('click', 'elecBounds', (e) => {
+      selectedPolygonIdRef.current = handleMapClick(mapRef, selectedParty, e, selectedPolygonIdRef.current);
+    });
+
+    if (selectedParty !== null) {
+      mapRef.current.getCanvas().style.cursor = 'crosshair';
+    } else {
+      mapRef.current.getCanvas().style.cursor = 'grab';
+    }
+  }, [selectedParty]);
+
   return (
     <TooltipPrimitive.TooltipProvider>
       <TooltipPrimitive.Tooltip delayDuration={0} open={hoverDesc !== null} >
-        <div id='mapContainer' ref={tooltipRef} className="relative w-full h-[60vh] max-w-5xl mx-auto my-8 rounded-2xl shadow-lg overflow-hidden">
+        <div id='rectMapContainer' ref={tooltipRef} className="relative w-full h-[60vh] max-w-5xl mx-auto my-8 rounded-2xl shadow-lg overflow-hidden">
           <MapLegend/>
+          <CirclePicker onSelect={handlePickerSelect}/>
           <TooltipPrimitive.TooltipTrigger  asChild>
             <div id="map" ref={mapContainerRef} className="absolute w-full h-full"/>
           </TooltipPrimitive.TooltipTrigger>
-          
         </div>
         <TooltipPrimitive.TooltipContent
             align="start"
