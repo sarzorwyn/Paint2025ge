@@ -22,7 +22,7 @@ const MapElement = () => {
 
   const fillColorExpression = [
     "match",
-    ["get", "party"],  // Get the "party" property from the feature
+    ['feature-state', 'party'],  // Get the "party" property from the feature
     ...politicalParties.flatMap(({ label, hex }) => [label, hex]),
     "#e0e0ff" // Default color if no match is found
 ];
@@ -64,7 +64,6 @@ const MapElement = () => {
         },
       });
 
-      console.log(politicalParties.flatMap(({ label, hex }) => [label, hex]))
 
 
       mapRef.current.addLayer({
@@ -73,8 +72,8 @@ const MapElement = () => {
         source: 'elecBoundsSource',
         layout: {},
         paint: {
-          'fill-color': fillColorExpression,
-          'fill-opacity': 0.5
+          'fill-color':  fillColorExpression,
+          'fill-opacity': 0.9
         }
       });
 
@@ -88,6 +87,8 @@ const MapElement = () => {
           'line-width': ['case', ['boolean', ['feature-state', 'selected'], false], 5, ['boolean', ['feature-state', 'hover'], false],  3, 1]
         }
       });
+      
+      console.log(politicalParties.flatMap(({ label, hex }) => [label, hex]));
 
       mapRef.current.on('click', (e) => {
         const features =  mapRef.current.queryRenderedFeatures(e.point);
@@ -104,45 +105,40 @@ const MapElement = () => {
           }
       });
 
-      if (selectedPolygonIdRef.current !== null) {
-        mapRef.current.setFeatureState(
-          { source: 'elecBoundsSource', id: selectedPolygonId },
-          { selected: false }
-        );
-      }
-    });
 
-    mapRef.current.on('mousemove', 'elecBounds', (e) => {
-      if (e.features.length > 0) {
-        mapRef.current.getCanvas().style.cursor = 'pointer';
-        if (hoveredPolygonId !== null) {
+  
+      mapRef.current.on('mousemove', 'elecBounds', (e) => {
+        if (e.features.length > 0) {
+          mapRef.current.getCanvas().style.cursor = 'pointer';
+          if (hoveredPolygonId !== null) {
+            mapRef.current.setFeatureState(
+              { source: 'elecBoundsSource', id: hoveredPolygonId },
+              { hover: false }
+            );
+          }
+          hoveredPolygonId = e.features[0].id;
           mapRef.current.setFeatureState(
             { source: 'elecBoundsSource', id: hoveredPolygonId },
-            { hover: false }
+            { hover: true }
           );
-        }
-        hoveredPolygonId = e.features[0].id;
-        mapRef.current.setFeatureState(
-          { source: 'elecBoundsSource', id: hoveredPolygonId },
-          { hover: true }
-        );
-        setHoverDesc(e.features[0].properties.ED_DESC.toLowerCase().replace(/\b\w/g, s => s.toUpperCase()));
-      }
-
-      mapRef.current.on('mouseleave', 'elecBounds', () => {
-        mapRef.current.getCanvas().style.cursor = 'grab';
-        if (hoveredPolygonId !== null) {
-          mapRef.current.setFeatureState(
-            { source: 'elecBoundsSource', id: hoveredPolygonId },
-            { hover: false }
-          );
-        }
-        hoveredPolygonId = null;
-        setHoverDesc(null);
-      });
-
-
+          setHoverDesc(e.features[0].properties.ED_DESC.toLowerCase().replace(/\b\w/g, s => s.toUpperCase()));
+        }});
+  
+        mapRef.current.on('mouseleave', 'elecBounds', () => {
+          mapRef.current.getCanvas().style.cursor = 'grab';
+          if (hoveredPolygonId !== null) {
+            mapRef.current.setFeatureState(
+              { source: 'elecBoundsSource', id: hoveredPolygonId },
+              { hover: false }
+            );
+          }
+          hoveredPolygonId = null;
+          setHoverDesc(null);
+        });
+  
     });
+
+  
   }, []);
 
   const handlePickerSelect = useCallback((e: { currentTarget: { id: React.SetStateAction<null>; } | null; }) => {

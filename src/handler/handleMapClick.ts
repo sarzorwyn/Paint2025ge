@@ -8,8 +8,6 @@ export const handleMapClick = (mapRef, selectedParty, e: mapboxgl.MapMouseEvent,
     }
     if (e && e.features.length > 0) {
       newSelectedPolygonId = e.features[0].id;
-      console.log(e.features[0].id);
-
 
       if (selectedParty !== null) {
         console.log(selectedParty)
