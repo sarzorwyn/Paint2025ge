@@ -1,7 +1,7 @@
 "use client";
 
 import { Button } from "@/components/ui/button";
-import { DropdownMenu, DropdownMenuContent, DropdownMenuGroup, DropdownMenuItem, DropdownMenuLabel, DropdownMenuPortal, DropdownMenuSeparator, DropdownMenuShortcut, DropdownMenuSub, DropdownMenuSubContent, DropdownMenuSubTrigger, DropdownMenuTrigger } from "@/components/ui/dropdown-menu";
+import { DropdownMenu, DropdownMenuContent, DropdownMenuItem, DropdownMenuLabel, DropdownMenuSeparator, DropdownMenuTrigger } from "@/components/ui/dropdown-menu";
 import { politicalParties } from "@/lib/politicalParties";
 import { Menu } from "lucide-react"; 
 import Image from "next/image";
@@ -26,32 +26,14 @@ export default function CirclePicker({onSelect}) {
         <div className="grid grid-cols-3 sm:grid-cols-2 md:grid-cols-none gap-2">
         {politicalParties
             .map((item) => (
-              <DropdownMenuItem id={item.label} key={item.label} className="p-0 flex justify-center" onClick={onSelect}>
-                <Image src={item.icon} alt={item.label} width={17} height={17} />
-                <div className="hidden sm:block">{item.label}</div>
+              <DropdownMenuItem id={item.name} key={item.name} className="p-0 flex justify-center" onClick={onSelect}>
+                <Image src={item.icon} alt={item.name} width={17} height={17} />
+                <div className="hidden sm:block">{item.name}</div>
               </DropdownMenuItem>
             ))}
         </div>
       </DropdownMenuContent>
     </DropdownMenu>
-
-      {/* <DropdownMenu>
-        <DropdownMenuTrigger asChild>
-
-
-        </DropdownMenuTrigger>
-        <DropdownMenuContent
-          align="end"
-          className="w-4 bg-white border border-gray-200 shadow-md rounded-lg p-1"
-        >
-          {politicalParties
-            .map((item) => (
-              <DropdownMenuItem key={item.label} className="p-2 flex justify-center">
-                <img src={item.icon} alt={item.label} className="w-5 h-5 sm:w-6 sm:h-6 bg-cover bg-center rounded-full" />
-              </DropdownMenuItem>
-            ))}
-        </DropdownMenuContent>
-      </DropdownMenu> */}
     </div>
   );
 }

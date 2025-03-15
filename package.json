@@ -16,6 +16,7 @@
     "@turf/turf": "^7.2.0",
     "class-variance-authority": "^0.7.1",
     "clsx": "^2.1.1",
+    "d3-parliament-chart": "^0.0.6",
     "lucide-react": "^0.479.0",
     "mapbox-gl": "^3.10.0",
     "next": "15.2.2",

@@ -10,12 +10,10 @@ export const handleMapClick = (mapRef, selectedParty, e: mapboxgl.MapMouseEvent,
       newSelectedPolygonId = e.features[0].id;
 
       if (selectedParty !== null) {
-        console.log(selectedParty)
         mapRef.current.setFeatureState(
           { source: 'elecBoundsSource', id: newSelectedPolygonId },
           { party: selectedParty}
         );
-        console.log(e.features[0])
       } else {
         mapRef.current.setFeatureState(
             { source: 'elecBoundsSource', id: newSelectedPolygonId },

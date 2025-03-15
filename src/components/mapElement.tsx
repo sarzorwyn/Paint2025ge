@@ -11,9 +11,9 @@ import CirclePicker from './circlePicker';
 import { handleMapClick } from '@/handler/handleMapClick';
 
 
-const MapElement = () => {
-  const mapContainerRef = useRef(null);
-  const mapRef = useRef<mapboxgl.Map>(null); // <mapboxgl.Map | null>
+const MapElement = ({updateArea, partyAreas, partySeats}: { updateArea: (area: string, party: string) => void }): React.JSX.Element => {
+  const mapContainerRef = useRef<HTMLElement>(null);
+  const mapRef = useRef<mapboxgl.Map>(null);
   const {x, y, tooltipRef} = useMouse<HTMLDivElement>();
   let hoveredPolygonId: string | number | null  = null;
   const selectedPolygonIdRef = useRef<null | string>(null);
@@ -22,16 +22,10 @@ const MapElement = () => {
 
   const fillColorExpression = [
     "match",
-    ['feature-state', 'party'],  // Get the "party" property from the feature
-    ...politicalParties.flatMap(({ label, hex }) => [label, hex]),
-    "#e0e0ff" // Default color if no match is found
+    ['feature-state', 'party'], 
+    ...politicalParties.flatMap(({ name, hex }) => [name, hex]),
+    "#e0e0ff" // Default color
 ];
-
-// const fillColorExpression = [
-//   "match",
-//   ['string', ['feature-state', 'party'], 'WP'], '#EF4444',
-//   "#e0e0ff" // Default color if no match is found
-// ];
 
   useEffect(() => {
     mapboxgl.accessToken = process.env.NEXT_PUBLIC_MAPBOX_API;
@@ -73,7 +67,7 @@ const MapElement = () => {
         layout: {},
         paint: {
           'fill-color':  fillColorExpression,
-          'fill-opacity': 0.9
+          'fill-opacity': 1
         }
       });
 
@@ -88,7 +82,6 @@ const MapElement = () => {
         }
       });
       
-      console.log(politicalParties.flatMap(({ label, hex }) => [label, hex]));
 
       mapRef.current.on('click', (e) => {
         const features =  mapRef.current.queryRenderedFeatures(e.point);
@@ -109,7 +102,11 @@ const MapElement = () => {
   
       mapRef.current.on('mousemove', 'elecBounds', (e) => {
         if (e.features.length > 0) {
-          mapRef.current.getCanvas().style.cursor = 'pointer';
+          if (selectedParty === null) {
+            mapRef.current.getCanvas().style.cursor = 'pointer';
+          } else {
+            mapRef.current.getCanvas().style.cursor = 'crosshair';
+          }
           if (hoveredPolygonId !== null) {
             mapRef.current.setFeatureState(
               { source: 'elecBoundsSource', id: hoveredPolygonId },
@@ -150,10 +147,10 @@ const MapElement = () => {
   }, []);
 
   
-
   useEffect(() => {
     mapRef.current.on('click', 'elecBounds', (e) => {
       selectedPolygonIdRef.current = handleMapClick(mapRef, selectedParty, e, selectedPolygonIdRef.current);
+      updateArea(selectedPolygonIdRef.current , selectedParty);
     });
 
     if (selectedParty !== null) {
@@ -167,7 +164,7 @@ const MapElement = () => {
     <TooltipPrimitive.TooltipProvider>
       <TooltipPrimitive.Tooltip delayDuration={0} open={hoverDesc !== null} >
         <div id='rectMapContainer' ref={tooltipRef} className="relative w-full h-[60vh] max-w-5xl mx-auto my-8 rounded-2xl shadow-lg overflow-hidden">
-          <MapLegend/>
+          <MapLegend partySeats={partySeats}/>
           <CirclePicker onSelect={handlePickerSelect}/>
           <TooltipPrimitive.TooltipTrigger  asChild>
             <div id="map" ref={mapContainerRef} className="absolute w-full h-full"/>
