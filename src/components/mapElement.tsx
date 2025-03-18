@@ -6,13 +6,13 @@ import 'mapbox-gl/dist/mapbox-gl.css';
 import * as TooltipPrimitive from "@radix-ui/react-tooltip";
 import { useMouse } from '../lib/useMouse';
 import { politicalParties } from '@/lib/politicalParties';
-import { MapLegend } from './mapLegend';
+import MapLegend from './mapLegend';
 import CirclePicker from './circlePicker';
 import { handleMapClick } from '@/handler/handleMapClick';
 
 
-const MapElement = ({updateArea, partyAreas, partySeats}: { updateArea: (area: string, party: string) => void }): React.JSX.Element => {
-  const mapContainerRef = useRef<HTMLElement>(null);
+const MapElement = ({updateArea, partyAreas, partySeats}: { updateArea: (area: string, party: string) => void, partyAreas: Map<string, string | null>, partySeats: Map<string, number> }): React.JSX.Element => {
+  const mapContainerRef = useRef<HTMLDivElement>(null);
   const mapRef = useRef<mapboxgl.Map>(null);
   const {x, y, tooltipRef} = useMouse<HTMLDivElement>();
   let hoveredPolygonId: string | number | null  = null;
@@ -25,7 +25,7 @@ const MapElement = ({updateArea, partyAreas, partySeats}: { updateArea: (area: s
     ['feature-state', 'party'], 
     ...politicalParties.flatMap(({ name, hex }) => [name, hex]),
     "#e0e0ff" // Default color
-];
+  ];
 
   useEffect(() => {
     mapboxgl.accessToken = process.env.NEXT_PUBLIC_MAPBOX_API;
@@ -42,14 +42,14 @@ const MapElement = ({updateArea, partyAreas, partySeats}: { updateArea: (area: s
 
 
     mapRef.current.on('load', () => {
-      if (mapRef.current.getSource('elecBoundsSource') == null) {
-      mapRef.current.addSource('elecBoundsSource', {
+      if (mapRef.current?.getSource('elecBoundsSource') == null) {
+      mapRef.current?.addSource('elecBoundsSource', {
         type: 'geojson',
         data: '/geojsons/ElectoralBoundary2025GEOJSON.geojson',
         promoteId: 'FID'
       });}
 
-      mapRef.current.addLayer({
+      mapRef.current?.addLayer({
         id: 'background-layer',
         type: 'background',
         paint: {
@@ -60,7 +60,7 @@ const MapElement = ({updateArea, partyAreas, partySeats}: { updateArea: (area: s
 
 
 
-      mapRef.current.addLayer({
+      mapRef.current?.addLayer({
         id: 'elecBounds',
         type: 'fill',
         source: 'elecBoundsSource',
@@ -71,7 +71,7 @@ const MapElement = ({updateArea, partyAreas, partySeats}: { updateArea: (area: s
         }
       });
 
-      mapRef.current.addLayer({
+      mapRef.current?.addLayer({
         id: 'outline',
         type: 'line',
         source: 'elecBoundsSource',
@@ -83,13 +83,13 @@ const MapElement = ({updateArea, partyAreas, partySeats}: { updateArea: (area: s
       });
       
 
-      mapRef.current.on('click', (e) => {
-        const features =  mapRef.current.queryRenderedFeatures(e.point);
+      mapRef.current?.on('click', (e) => {
+        const features =  mapRef.current?.queryRenderedFeatures(e.point);
         // If no features were clicked, it means the background was clicked
           if (features.length === 0) {
             setSelectedParty(null);
             if (selectedPolygonIdRef.current !== null) {
-              mapRef.current.setFeatureState(
+              mapRef.current?.setFeatureState(
                 { source: 'elecBoundsSource', id: selectedPolygonIdRef.current },
                 { selected: false }
               );
@@ -100,7 +100,7 @@ const MapElement = ({updateArea, partyAreas, partySeats}: { updateArea: (area: s
 
 
   
-      mapRef.current.on('mousemove', 'elecBounds', (e) => {
+      mapRef.current?.on('mousemove', 'elecBounds', (e) => {
         if (e.features.length > 0) {
           if (selectedParty === null) {
             mapRef.current.getCanvas().style.cursor = 'pointer';
@@ -114,7 +114,7 @@ const MapElement = ({updateArea, partyAreas, partySeats}: { updateArea: (area: s
             );
           }
           hoveredPolygonId = e.features[0].id;
-          mapRef.current.setFeatureState(
+          mapRef.current?.setFeatureState(
             { source: 'elecBoundsSource', id: hoveredPolygonId },
             { hover: true }
           );
@@ -163,6 +163,7 @@ const MapElement = ({updateArea, partyAreas, partySeats}: { updateArea: (area: s
   return (
     <TooltipPrimitive.TooltipProvider>
       <TooltipPrimitive.Tooltip delayDuration={0} open={hoverDesc !== null} >
+        <div className="h-[37rem] max-md:h-[26rem] max-md:min-h-[26rem]  xl:flex-row">
         <div id='rectMapContainer' ref={tooltipRef} className="relative w-full h-[60vh] max-w-5xl mx-auto my-8 rounded-2xl shadow-lg overflow-hidden">
           <MapLegend partySeats={partySeats}/>
           <CirclePicker onSelect={handlePickerSelect}/>
@@ -179,6 +180,7 @@ const MapElement = ({updateArea, partyAreas, partySeats}: { updateArea: (area: s
           >
             {hoverDesc}
         </TooltipPrimitive.TooltipContent>
+        </div>
       </TooltipPrimitive.Tooltip>
     </TooltipPrimitive.TooltipProvider>
 
