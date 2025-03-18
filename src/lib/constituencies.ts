@@ -1,232 +1,233 @@
-export const constituencies = [
+export const constituencies = 
+[
     {
         "id": 0,
-        "fullname": "JURONG EAST-BUKIT BATOK GRC",
-        "name": "JURONG EAST-BUKIT BATOK",
+        "fullname": "Jurong East-Bukit Batok GRC",
+        "name": "Jurong East-Bukit Batok",
         "code": "JE",
         "seats": 5
     },
     {
         "id": 1,
-        "fullname": "WEST COAST-JURONG WEST GRC",
-        "name": "WEST COAST-JURONG WEST",
+        "fullname": "West Coast-Jurong West GRC",
+        "name": "West Coast-Jurong West",
         "code": "WJ",
         "seats": 5
     },
     {
         "id": 2,
-        "fullname": "KEBUN BARU SMC",
-        "name": "KEBUN BARU",
+        "fullname": "Kebun Baru SMC",
+        "name": "Kebun Baru",
         "code": "KR",
         "seats": 1
     },
     {
         "id": 3,
-        "fullname": "YIO CHU KANG SMC",
-        "name": "YIO CHU KANG",
+        "fullname": "Yio Chu Kang SMC",
+        "name": "Yio Chu Kang",
         "code": "YK",
         "seats": 1
     },
     {
         "id": 4,
-        "fullname": "QUEENSTOWN SMC",
-        "name": "QUEENSTOWN",
+        "fullname": "Queenstown SMC",
+        "name": "Queenstown",
         "code": "QT",
         "seats": 1
     },
     {
         "id": 5,
-        "fullname": "TANJONG PAGAR GRC",
-        "name": "TANJONG PAGAR",
+        "fullname": "Tanjong Pagar GRC",
+        "name": "Tanjong Pagar",
         "code": "TP",
         "seats": 5
     },
     {
         "id": 6,
-        "fullname": "RADIN MAS SMC",
-        "name": "RADIN MAS",
+        "fullname": "Radin Mas SMC",
+        "name": "Radin Mas",
         "code": "RM",
         "seats": 1
     },
     {
         "id": 7,
-        "fullname": "POTONG PASIR SMC",
-        "name": "POTONG PASIR",
+        "fullname": "Potong Pasir SMC",
+        "name": "Potong Pasir",
         "code": "PS",
         "seats": 1
     },
     {
         "id": 8,
-        "fullname": "PUNGGOL GRC",
-        "name": "PUNGGOL",
+        "fullname": "Punggol GRC",
+        "name": "Punggol",
         "code": "PG",
         "seats": 4
     },
     {
         "id": 9,
-        "fullname": "JALAN KAYU SMC",
-        "name": "JALAN KAYU",
+        "fullname": "Jalan Kayu SMC",
+        "name": "Jalan Kayu",
         "code": "JK",
         "seats": 1
     },
     {
         "id": 10,
-        "fullname": "ALJUNIED GRC",
-        "name": "ALJUNIED",
+        "fullname": "Aljunied GRC",
+        "name": "Aljunied",
         "code": "AJ",
         "seats": 5
     },
     {
         "id": 11,
-        "fullname": "ANG MO KIO GRC",
-        "name": "ANG MO KIO",
+        "fullname": "Ang Mo Kio GRC",
+        "name": "Ang Mo Kio",
         "code": "AM",
         "seats": 5
     },
     {
         "id": 12,
-        "fullname": "BUKIT GOMBAK SMC",
-        "name": "BUKIT GOMBAK",
+        "fullname": "Bukit Gombak SMC",
+        "name": "Bukit Gombak",
         "code": "BG",
         "seats": 1
     },
     {
         "id": 13,
-        "fullname": "CHUA CHU KANG GRC",
-        "name": "CHUA CHU KANG",
+        "fullname": "Chua Chu Kang GRC",
+        "name": "Chua Chu Kang",
         "code": "CK",
         "seats": 4
     },
     {
         "id": 14,
-        "fullname": "HOLLAND-BUKIT TIMAH GRC",
-        "name": "HOLLAND-BUKIT TIMAH",
+        "fullname": "Holland-Bukit Timah GRC",
+        "name": "Holland-Bukit Timah",
         "code": "HT",
         "seats": 4
     },
     {
         "id": 15,
-        "fullname": "JURONG CENTRAL SMC",
-        "name": "JURONG CENTRAL",
+        "fullname": "Jurong Central SMC",
+        "name": "Jurong Central",
         "code": "JU",
         "seats": 1
     },
     {
         "id": 16,
-        "fullname": "JALAN BESAR GRC",
-        "name": "JALAN BESAR",
+        "fullname": "Jalan Besar GRC",
+        "name": "Jalan Besar",
         "code": "JB",
         "seats": 4
     },
     {
         "id": 17,
-        "fullname": "PIONEER SMC",
-        "name": "PIONEER",
+        "fullname": "Pioneer SMC",
+        "name": "Pioneer",
         "code": "PI",
         "seats": 1
     },
     {
         "id": 18,
-        "fullname": "MARYMOUNT SMC",
-        "name": "MARYMOUNT",
+        "fullname": "Marymount SMC",
+        "name": "Marymount",
         "code": "MR",
         "seats": 1
     },
     {
         "id": 19,
-        "fullname": "BISHAN-TOA PAYOH GRC",
-        "name": "BISHAN-TOA PAYOH",
+        "fullname": "Bishan-Toa Payoh GRC",
+        "name": "Bishan-Toa Payoh",
         "code": "BS",
         "seats": 4
     },
     {
         "id": 20,
-        "fullname": "HOUGANG SMC",
-        "name": "HOUGANG",
+        "fullname": "Hougang SMC",
+        "name": "Hougang",
         "code": "HG",
         "seats": 1
     },
     {
         "id": 21,
-        "fullname": "BUKIT PANJANG SMC",
-        "name": "BUKIT PANJANG",
+        "fullname": "Bukit Panjang SMC",
+        "name": "Bukit Panjang",
         "code": "BP",
         "seats": 1
     },
     {
         "id": 22,
-        "fullname": "SENGKANG GRC",
-        "name": "SENGKANG",
+        "fullname": "Sengkang GRC",
+        "name": "Sengkang",
         "code": "SK",
         "seats": 4
     },
     {
         "id": 23,
-        "fullname": "MARSILING-YEW TEE GRC",
-        "name": "MARSILING-YEW TEE",
+        "fullname": "Marsiling-Yew Tee GRC",
+        "name": "Marsiling-Yew Tee",
         "code": "MY",
         "seats": 4
     },
     {
         "id": 24,
-        "fullname": "NEE SOON GRC",
-        "name": "NEE SOON",
+        "fullname": "Nee Soon GRC",
+        "name": "Nee Soon",
         "code": "NS",
         "seats": 5
     },
     {
         "id": 25,
-        "fullname": "SEMBAWANG WEST SMC",
-        "name": "SEMBAWANG WEST",
+        "fullname": "Sembawang West SMC",
+        "name": "Sembawang West",
         "code": "SE",
         "seats": 1
     },
     {
         "id": 26,
-        "fullname": "TAMPINES CHANGKAT SMC",
-        "name": "TAMPINES CHANGKAT",
+        "fullname": "Tampines Changkat SMC",
+        "name": "Tampines Changkat",
         "code": "TC",
         "seats": 1
     },
     {
         "id": 27,
-        "fullname": "MOUNTBATTEN SMC",
-        "name": "MOUNTBATTEN",
+        "fullname": "Mountbatten SMC",
+        "name": "Mountbatten",
         "code": "MB",
         "seats": 1
     },
     {
         "id": 28,
-        "fullname": "SEMBAWANG GRC",
-        "name": "SEMBAWANG",
+        "fullname": "Sembawang GRC",
+        "name": "Sembawang",
         "code": "SB",
         "seats": 5
     },
     {
         "id": 29,
-        "fullname": "EAST COAST GRC",
-        "name": "EAST COAST",
+        "fullname": "East Coast GRC",
+        "name": "East Coast",
         "code": "EC",
         "seats": 5
     },
     {
         "id": 30,
-        "fullname": "MARINE PARADE-BRADDELL HEIGHTS GRC",
-        "name": "MARINE PARADE-BRADDELL HEIGHTS",
+        "fullname": "Marine Parade-Braddell Heights GRC",
+        "name": "Marine Parade-Braddell Heights",
         "code": "MH",
         "seats": 5
     },
     {
         "id": 31,
-        "fullname": "TAMPINES GRC",
-        "name": "TAMPINES",
+        "fullname": "Tampines GRC",
+        "name": "Tampines",
         "code": "TM",
         "seats": 5
     },
     {
         "id": 32,
-        "fullname": "PASIR RIS-CHANGI GRC",
-        "name": "PASIR RIS-CHANGI",
+        "fullname": "Pasir Ris-Changi GRC",
+        "name": "Pasir Ris-Changi",
         "code": "PC",
         "seats": 4
     }
