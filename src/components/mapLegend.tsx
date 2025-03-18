@@ -11,7 +11,7 @@ const legendDiv = ({ partySeats }: { partySeats: Map<string, number> }) => (
         .map((item) => (
           <div key={item.name} className="flex items-center space-x-1">
             <span
-              className={`w-4 h-4 sm:w-5 sm:h-5rounded-full ${item.bgColor}`}
+              className={`w-4 h-4 sm:w-5 sm:h-5rounded-full ${item.color.bgColor}`}
             />
             <div
               className={`w-5 h-5 sm:w-6 sm:h-6 bg-cover bg-center rounded-full`}

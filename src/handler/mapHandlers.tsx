@@ -51,16 +51,3 @@ export const getHoverDesc = (hoverCode: string | null) => {
     </>
   );
 };
-
-export const partyColor = (party: string | null) => {
-  return (
-    politicalParties.find((polParty) => polParty.name === party)?.hex ||
-    "#e0e0ff"
-  );
-};
-
-export const getHoverColor = (selectedParty: string | null, hoverId: string | null, partyAreas: Map<string, string>) => {
-  return politicalParties.find((polParty) => polParty.name === selectedParty)?.hoverColor 
-  || (hoverId &&  politicalParties.find((polParty) => polParty.name === partyAreas.get(hoverId))?.hoverColor)
-  || "bg-gray-100";
-}

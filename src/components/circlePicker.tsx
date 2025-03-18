@@ -9,12 +9,13 @@ import {
   DropdownMenuSeparator,
   DropdownMenuTrigger,
 } from "@/components/ui/dropdown-menu";
+import { getPartyColor } from "@/handler/partyColorHandlers";
 import { politicalParties } from "@/lib/politicalParties";
 import { Menu } from "lucide-react";
 import Image from "next/image";
 
 const getButtonColor = (party) => {
-  return (politicalParties.find((item) => item.name === party)?.borderColor || "border-gray-300");
+  return (getPartyColor(party)?.borderColor || "border-gray-300");
 }
 
 export default function CirclePicker({ onSelect, selectedParty }) {

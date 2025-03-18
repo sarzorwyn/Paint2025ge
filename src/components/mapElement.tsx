@@ -17,9 +17,8 @@ import CirclePicker from "./circlePicker";
 import {
   handleMapClick,
   getHoverDesc,
-  partyColor,
-  getHoverColor,
 } from "@/handler/mapHandlers";
+import { getHexPartyColor, getHoverColor } from "@/handler/partyColorHandlers";
 
 const MapElement = ({
   updateArea,
@@ -43,7 +42,7 @@ const MapElement = ({
       "match",
       ["get", "NEW_ED"],
       ...[...partyAreas].flatMap((pArea) => {
-        return [pArea[0], partyColor(pArea[1])];
+        return [pArea[0], getHexPartyColor(pArea[1])];
       }),
       "#e0e0ff", // Default color
     ],
@@ -206,7 +205,7 @@ const MapElement = ({
   return (
     <TooltipPrimitive.TooltipProvider>
       <TooltipPrimitive.Tooltip delayDuration={0} open={hoverId !== null}>
-        <div className="h-[37rem] max-md:h-[26rem] max-md:min-h-[26rem]  xl:flex-row">
+        <div >
           <div
             id="rectMapContainer"
             ref={tooltipRef}

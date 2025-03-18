@@ -19,6 +19,7 @@
     "hast-util-to-html": "^9.0.5",
     "lucide-react": "^0.479.0",
     "mapbox-gl": "^3.10.0",
+    "motion": "^12.5.0",
     "next": "15.2.2",
     "next-themes": "^0.4.6",
     "parliament-svg": "^3.0.0",

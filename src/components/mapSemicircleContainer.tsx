@@ -1,16 +1,16 @@
 "use client";
 import MapElement from "./mapElement";
 import { constituencies } from "@/lib/constituencies";
-import { politicalParties } from "@/lib/politicalParties";
-import { useEffect, useMemo, useRef, useState } from "react";
+import { useMemo, useState } from "react";
 import ParliamentSemicircle from "./parliamentSemicircle";
+import PartySeatTable from "./partySeatTable";
 
 const MapSemicircleContainer = () => {
   const [partyAreas, setPartyAreas] = useState<Map<string, string | null>>(
     new Map(constituencies.map(({ code }) => [code, null]))
   );
   const partySeats: Map<string, number> = useMemo(() => {
-    return [...partyAreas].reduce((acc, [areaCode, party]) => {
+    return new Map([...[...partyAreas].reduce((acc, [areaCode, party]) => {
       if (party) {
         acc.set(
           party,
@@ -25,7 +25,7 @@ const MapSemicircleContainer = () => {
         );
       }
       return acc;
-    }, new Map<string, number>());
+    }, new Map<string, number>()).entries()].sort((a, b) => b[1] - a[1]));
   }, [partyAreas]);
 
   const updateArea = (newId, party) => {
@@ -41,14 +41,19 @@ const MapSemicircleContainer = () => {
   };
 
   return (
-    <div className="relative flex  flex-col gap-x-2 gap-y-60 md:gap-y-20 ">
-      <MapElement
+    <div className="relative flex  max-w-5xl w-full mx-auto flex-col gap-x-2 gap-y-40 sm:gap-y-45 md:gap-y-20 ">
+
+      <div className="h-[37rem] max-md:h-[26rem] max-md:min-h-[26rem]  xl:flex-row">      <MapElement
         partyAreas={partyAreas}
         partySeats={partySeats}
         updateArea={updateArea}
-      />
-      <div className="flex justify-center bottom-0">
+      /></div>
+      <div className="flex justify-center pt-20 md:pt-10">
         <ParliamentSemicircle partySeats={partySeats} />
+      </div>
+
+      <div className="flex justify-center md:my-8 md:pt-20">
+        <PartySeatTable partySeats={partySeats} />
       </div>
     </div>
   );

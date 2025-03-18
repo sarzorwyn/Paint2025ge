@@ -1,7 +1,7 @@
 import { politicalParties } from "@/lib/politicalParties";
 import parliamentSVG from "parliament-svg";
 import { toHtml } from "hast-util-to-html";
-import Image from "next/image";
+import { getPartyColor } from "@/handler/partyColorHandlers";
 
 const Semicircle = ({
   partySeatsColors,
@@ -27,7 +27,7 @@ const ParliamentSemicircle = ({
 
   partySeats.forEach((seats, partyName) => {
     const partyColor =
-      politicalParties.find(({ name }) => name === partyName)?.hex || "#333333";
+      getPartyColor(partyName)?.hex || "#333333";
     partySeatsColors[partyName] = { seats: Number(seats), colour: partyColor };
   });
 
