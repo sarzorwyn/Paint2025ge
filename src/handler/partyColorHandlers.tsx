@@ -12,10 +12,10 @@ export const getHexPartyColor = (party: string | null) => {
 export const getHoverColor = (selectedParty: string | null, hoverId: string | null, partyAreas: Map<string, string>) => {
   return getPartyColor(selectedParty)?.BorderLColor 
   || getPartyColor(partyAreas.get(hoverId))?.BorderLColor
-  || "bg-gray-100";
+  || "bg-gray-300";
 }
 
 export const getTablePartyColor = (party: string | null) => {
   return getPartyColor(party)?.BorderLColor
-  || "bg-gray-100";
+  || "border-l-gray-300";
 }

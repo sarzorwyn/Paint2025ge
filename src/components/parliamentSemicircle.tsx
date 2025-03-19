@@ -27,7 +27,7 @@ const ParliamentSemicircle = ({
 
   partySeats.forEach((seats, partyName) => {
     const partyColor =
-      getPartyColor(partyName)?.hex || "#333333";
+      getPartyColor(partyName)?.hex || "#d1d5dc ";
     partySeatsColors[partyName] = { seats: Number(seats), colour: partyColor };
   });
 

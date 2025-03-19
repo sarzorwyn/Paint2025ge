@@ -30,6 +30,6 @@ const legendDiv = ({ partySeats }: { partySeats: Map<string, number> }) => (
 
 // PartySeats includes vacant seats as a group so we need to check if there is more than one party
 const MapLegend = ({ partySeats }: { partySeats: Map<string, number> }) =>
-  partySeats.size > 1 && legendDiv({ partySeats });
+  (politicalParties.filter(({ name }) => partySeats.get(name) > 0).length > 0  && legendDiv({ partySeats }));
 
 export default MapLegend;
