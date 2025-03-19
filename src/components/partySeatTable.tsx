@@ -1,9 +1,11 @@
 "use client"
 
 import { getTablePartyColor } from "@/handler/partyColorHandlers";
-import { Table, TableBody, TableCell, TableHead, TableHeader, TableRow} from "./ui/table";
+import { Table, TableCell, TableHead, TableHeader, TableRow} from "./ui/table";
 import { Button } from "./ui/button";
 import { SquarePlus, SquareMinus } from "lucide-react";
+import { motion } from "framer-motion";
+import { cn } from "@/lib/utils";
 
 const hasNoSeats = (partySeats: Map<string, number>, party: string) => (party === 'Vacant' || !partySeats?.has(party) || partySeats?.get(party) === 0)
 const canAddNcmp = (oppositionSeatsCount: number, party: string, largestParty: string) => (oppositionSeatsCount < 12 && party !== largestParty);
@@ -12,7 +14,15 @@ const canAddNcmp = (oppositionSeatsCount: number, party: string, largestParty: s
 const PartySeatTableBody = ({partySeats, ncmpCount, oppositionSeatsCount, handleIncrement, handleDecrement} : {partySeats: Map<string, number>, ncmpCount: Map<string, number>, oppositionSeatsCount: number, handleIncrement: (party: string) => void, handleDecrement: (party: string) => void}) => {
     const largestParty = Array.from(partySeats.entries())[0][0] === 'Vacant' ? Array.from(partySeats.entries())[1][0] : Array.from(partySeats.entries())[0][0];
     return (Array.from(partySeats).map(([party, seats]) => (
-        <TableRow key={party}>
+        <motion.tr
+        key={party}
+        layout 
+        initial={{ opacity: 0, y: 10 }}
+        animate={{ opacity: 1, y: 0 }}
+        exit={{ opacity: 0, y: -10 }}
+        transition={{ type: "spring", stiffness: 300, damping: 50 }}
+        className="hover:bg-muted/50 data-[state=selected]:bg-muted border-b transition-colors"
+      >
             <TableCell className={`font-semibold border-l-6 ${getTablePartyColor(party)} ${hasNoSeats(partySeats, party) && 'text-gray-400'}`}>{party}</TableCell>
             <TableCell className="font-semibold ">
                 <div className="relative flex justify-end items-center gap-2">
@@ -24,7 +34,7 @@ const PartySeatTableBody = ({partySeats, ncmpCount, oppositionSeatsCount, handle
                 </div>
             </TableCell>
             <TableCell className={`font-semibold text-right ${hasNoSeats(partySeats, party) && 'text-gray-400'}`}>{seats}</TableCell>
-        </TableRow>
+        </motion.tr>
     )))
 }
 
@@ -38,9 +48,9 @@ const PartySeatTable = ({partySeats, ncmpCount, oppositionSeatsCount, handleIncr
                     <TableHead className="max-w-0.5 text-right">Seats</TableHead>
                 </TableRow>
             </TableHeader>
-            <TableBody>
+            <motion.tbody className={cn("[&_tr:last-child]:border-0")}>
                 {PartySeatTableBody({partySeats, ncmpCount, oppositionSeatsCount, handleIncrement, handleDecrement})}
-            </TableBody>
+            </motion.tbody >
         </Table>
     );
 };
