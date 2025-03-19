@@ -6,26 +6,29 @@ import { Button } from "./ui/button";
 import { SquarePlus, SquareMinus } from "lucide-react";
 
 const hasNoSeats = (partySeats: Map<string, number>, party: string) => (party === 'Vacant' || !partySeats?.has(party) || partySeats?.get(party) === 0)
+const canAddNcmp = (oppositionSeatsCount: number, party: string, largestParty: string) => (oppositionSeatsCount < 12 && party !== largestParty);
 
-const PartySeatTableBody = ({partySeats, ncmpCount, handleIncrement, handleDecrement} : {partySeats: Map<string, number>, ncmpCount: Map<string, number>, handleIncrement: (party: string) => void, handleDecrement: (party: string) => void}) => {
+
+const PartySeatTableBody = ({partySeats, ncmpCount, oppositionSeatsCount, handleIncrement, handleDecrement} : {partySeats: Map<string, number>, ncmpCount: Map<string, number>, oppositionSeatsCount: number, handleIncrement: (party: string) => void, handleDecrement: (party: string) => void}) => {
+    const largestParty = Array.from(partySeats.entries())[0][0] === 'Vacant' ? Array.from(partySeats.entries())[1][0] : Array.from(partySeats.entries())[0][0];
     return (Array.from(partySeats).map(([party, seats]) => (
-        <TableRow className={`${hasNoSeats(partySeats, party) && 'text-gray-400'}`} key={party}>
-            <TableCell className={`font-semibold border-l-6 ${getTablePartyColor(party)}`}>{party}</TableCell>
+        <TableRow key={party}>
+            <TableCell className={`font-semibold border-l-6 ${getTablePartyColor(party)} ${hasNoSeats(partySeats, party) && 'text-gray-400'}`}>{party}</TableCell>
             <TableCell className="font-semibold ">
                 <div className="relative flex justify-end items-center gap-2">
-                    <Button variant="ghost" className={`text-black rounded ${party === 'Vacant' && 'invisible'}`} onClick={() => handleIncrement(party)}> <SquarePlus/> </Button>
-                        <span className=" sm:w-2 inline-block pb-0.5">
-                            {ncmpCount?.get(party) || 0}
-                        </span>
+                    <Button disabled={!canAddNcmp(oppositionSeatsCount, party, largestParty)}  variant="ghost" className={`  rounded ${party === 'Vacant' && 'invisible'}`} onClick={() => handleIncrement(party)}> <SquarePlus color={`${!canAddNcmp(oppositionSeatsCount, party, largestParty) ? '#777777' : '#000000'}`}/> </Button>
+                    <span className={`sm:w-2 inline-block pb-0.5 ${hasNoSeats(partySeats, party) && 'text-gray-400'}`}>
+                        {ncmpCount?.get(party) || 0}
+                    </span>
                     <Button variant="ghost" className={`text-black rounded ${(hasNoSeats(ncmpCount, party)) && 'invisible'}`} onClick={() => handleDecrement(party)}> <SquareMinus/> </Button>
                 </div>
             </TableCell>
-            <TableCell className="font-semibold text-right">{seats}</TableCell>
+            <TableCell className={`font-semibold text-right ${hasNoSeats(partySeats, party) && 'text-gray-400'}`}>{seats}</TableCell>
         </TableRow>
     )))
 }
 
-const PartySeatTable = ({partySeats, ncmpCount, handleIncrement, handleDecrement} : {partySeats: Map<string, number>}) => {
+const PartySeatTable = ({partySeats, ncmpCount, oppositionSeatsCount, handleIncrement, handleDecrement} : {partySeats: Map<string, number>}) => {
     return (
         <Table>
             <TableHeader>
@@ -36,7 +39,7 @@ const PartySeatTable = ({partySeats, ncmpCount, handleIncrement, handleDecrement
                 </TableRow>
             </TableHeader>
             <TableBody>
-                {PartySeatTableBody({partySeats, ncmpCount, handleIncrement, handleDecrement})}
+                {PartySeatTableBody({partySeats, ncmpCount, oppositionSeatsCount, handleIncrement, handleDecrement})}
             </TableBody>
         </Table>
     );

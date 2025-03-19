@@ -35,6 +35,17 @@ const MapSemicircleContainer = () => {
     return new Map([...partyToSeats.entries()].sort((a, b) => b[1] - a[1]));
   }, [partyAreas, ncmpCount]);
 
+  const oppositionSeatsCount = useMemo(() => {
+    const partyToSeatsArray = [...partySeats.entries()];
+    const largestParty = partyToSeatsArray[0][0] === 'Vacant' ? partyToSeatsArray[1][0] : partyToSeatsArray[0][0];
+
+    const oppositionSeats = partyToSeatsArray
+      .filter(([party]) => party !== largestParty && party !== 'Vacant')
+      .reduce((sum, [, seats]) => sum + seats, 0);
+    return oppositionSeats;
+  }, [partySeats]);
+
+
   const updateArea = (newId, party) => {
     setPartyAreas((prev) => {
       const newPartyAreas = new Map(prev);
@@ -47,15 +58,19 @@ const MapSemicircleContainer = () => {
     });
   };
 
-  const handleIncrement = (party) => {
+  const handleNcmpIncrement = (party) => {
     setNcmpCount((prev) => {
+      if (oppositionSeatsCount >= 12) {
+        return prev;
+      }
+
       const newNCMPs = new Map(prev);
       newNCMPs.set(party, (newNCMPs.get(party) || 0) + 1);
       return newNCMPs;
     });
   }
 
-  const handleDecrement = (party) => {
+  const handleNcmpDecrement = (party) => {
     setNcmpCount((prev) => {
       if ((prev?.get(party) || 0) <= 0) {
         return prev;
@@ -81,7 +96,7 @@ const MapSemicircleContainer = () => {
         <ParliamentSemicircle partySeats={partySeats} />
       </div>
       <div className="flex justify-center pt-[5%] md:my-8 md:pt-30 md:pr-10 md:pl-10">
-        <PartySeatTable partySeats={partySeats} ncmpCount={ncmpCount} handleIncrement={handleIncrement} handleDecrement={handleDecrement}/>
+        <PartySeatTable partySeats={partySeats} ncmpCount={ncmpCount} oppositionSeatsCount={oppositionSeatsCount} handleIncrement={handleNcmpIncrement} handleDecrement={handleNcmpDecrement}/>
       </div>
     </div>
   );
