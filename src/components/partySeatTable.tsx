@@ -4,10 +4,11 @@ import { getTablePartyColor } from "@/handler/partyColorHandlers";
 import { Table, TableCell, TableHead, TableHeader, TableRow } from "./ui/table";
 import { Button } from "./ui/button";
 import { SquarePlus, SquareMinus } from "lucide-react";
-import { motion } from "framer-motion";
 import { cn } from "@/lib/utils";
 import WarningBanner from "./ncmpWarningBanner";
 import { maxNCMPs, vacantParty } from "@/lib/politicalParties";
+import TableMotion from "./ui/tableMotion";
+import { motion } from "framer-motion";
 
 const hasNoSeats = (
   partySeats: Map<string, number> | undefined,
@@ -45,15 +46,7 @@ const PartySeatTableBody = ({
       ? Array.from(partySeats.entries())[1][0]
       : Array.from(partySeats.entries())[0][0];
   return Array.from(partySeats).map(([party, seats]) => (
-    <motion.tr
-      key={party}
-      layout
-      initial={{ opacity: 0, y: 10 }}
-      animate={{ opacity: 1, y: 0 }}
-      exit={{ opacity: 0, y: -10 }}
-      transition={{ type: "spring", stiffness: 300, damping: 50 }}
-      className="hover:bg-muted/50 data-[state=selected]:bg-muted border-b transition-colors"
-    >
+    <TableMotion key={party}>
       <TableCell
         className={`font-semibold border-l-6 ${getTablePartyColor(party)} ${
           hasNoSeats(partySeats, party) && "text-gray-400"
@@ -62,7 +55,7 @@ const PartySeatTableBody = ({
         {party}
       </TableCell>
       <TableCell className="font-semibold ">
-        <div className="relative flex justify-end items-center gap-2">
+        <div className="relative flex flex-row justify-end items-center gap-2">
           <Button
             disabled={
               !canAddNcmp(oppositionSeatsCount, party, largestParty, ncmpCount)
@@ -71,7 +64,6 @@ const PartySeatTableBody = ({
             className={`  rounded ${party === vacantParty && "invisible"}`}
             onClick={() => handleIncrement(party)}
           >
-            {" "}
             <SquarePlus
               color={`${
                 !canAddNcmp(
@@ -83,7 +75,7 @@ const PartySeatTableBody = ({
                   ? "#777777"
                   : "#000000"
               }`}
-            />{" "}
+            />
           </Button>
           <span
             className={`sm:w-2 inline-block pb-0.5 ${
@@ -99,8 +91,7 @@ const PartySeatTableBody = ({
             }`}
             onClick={() => handleDecrement(party)}
           >
-            {" "}
-            <SquareMinus />{" "}
+            <SquareMinus />
           </Button>
         </div>
       </TableCell>
@@ -111,7 +102,7 @@ const PartySeatTableBody = ({
       >
         {seats}
       </TableCell>
-    </motion.tr>
+    </TableMotion>
   ));
 };
 

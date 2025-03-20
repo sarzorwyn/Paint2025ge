@@ -173,7 +173,7 @@ const MapElement = ({
           <div
             id="rectMapContainer"
             ref={tooltipRef}
-            className="relative w-full h-[60vh] max-w-5xl mx-auto my-8 rounded-2xl shadow-lg overflow-hidden"
+            className="relative w-full h-[60vh] max-w-5xl mx-auto my-8 rounded-2xl shadow-sm overflow-hidden"
           >
             <MapLegend partySeats={partySeats} />
             <CirclePicker

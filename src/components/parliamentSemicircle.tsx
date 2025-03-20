@@ -7,7 +7,7 @@ import {
   AccordionItem,
   AccordionTrigger,
 } from "./ui/accordion";
-import AccordionMotion from "./ui/accordionMotion";
+import FadeInMotion from "./ui/fadeInMotion";
 
 const Semicircle = ({
   partySeatsColors,
@@ -15,19 +15,20 @@ const Semicircle = ({
   partySeatsColors: { [key: string]: { seats: number; colour: string } };
 }) => {
   const svg = toHtml(parliamentSVG(partySeatsColors, true));
-
+//  items-center justify-center
   return (
     <Accordion
       type="single"
       collapsible
-      className="sm:w-[40rem] w-full -mt-40 md:mt-0"
+      className="w-full"
     >
-      <AccordionItem value="item-1">
+      <AccordionItem  value="item-1">
         <AccordionTrigger>Parliament Diagram</AccordionTrigger>
-        <AccordionContent asChild>
-          <AccordionMotion>
-            <div dangerouslySetInnerHTML={{ __html: svg }} />
-          </AccordionMotion>
+        <AccordionContent >
+          <FadeInMotion>
+            <div className="max-w-[45rem] mx-auto">
+            <div  dangerouslySetInnerHTML={{ __html: svg }} /></div>
+          </FadeInMotion>
         </AccordionContent>
       </AccordionItem>
     </Accordion>
