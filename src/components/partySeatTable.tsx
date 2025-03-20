@@ -9,15 +9,23 @@ import { cn } from "@/lib/utils";
 import WarningBanner from "./ncmpWarningBanner";
 import { maxNCMPs, vacantParty } from "@/lib/politicalParties";
 
-const hasNoSeats = (partySeats: Map<string, number> | undefined, party: string) =>
-  party === vacantParty || !partySeats?.has(party) || partySeats?.get(party) === 0;
+const hasNoSeats = (
+  partySeats: Map<string, number> | undefined,
+  party: string
+) =>
+  party === vacantParty ||
+  !partySeats?.has(party) ||
+  partySeats?.get(party) === 0;
 const canAddNcmp = (
   oppositionSeatsCount: number,
   party: string,
   largestParty: string,
   ncmpCount: Map<string, number> | undefined
-) => oppositionSeatsCount < 12 && party !== largestParty 
-&& (ncmpCount ? Array.from(ncmpCount.values()).reduce((a, b) => a + b, 0) : 0) < maxNCMPs;
+) =>
+  oppositionSeatsCount < 12 &&
+  party !== largestParty &&
+  (ncmpCount ? Array.from(ncmpCount.values()).reduce((a, b) => a + b, 0) : 0) <
+    maxNCMPs;
 
 const PartySeatTableBody = ({
   partySeats,
@@ -56,7 +64,9 @@ const PartySeatTableBody = ({
       <TableCell className="font-semibold ">
         <div className="relative flex justify-end items-center gap-2">
           <Button
-            disabled={!canAddNcmp(oppositionSeatsCount, party, largestParty, ncmpCount)}
+            disabled={
+              !canAddNcmp(oppositionSeatsCount, party, largestParty, ncmpCount)
+            }
             variant="ghost"
             className={`  rounded ${party === vacantParty && "invisible"}`}
             onClick={() => handleIncrement(party)}
@@ -64,7 +74,12 @@ const PartySeatTableBody = ({
             {" "}
             <SquarePlus
               color={`${
-                !canAddNcmp(oppositionSeatsCount, party, largestParty, ncmpCount)
+                !canAddNcmp(
+                  oppositionSeatsCount,
+                  party,
+                  largestParty,
+                  ncmpCount
+                )
                   ? "#777777"
                   : "#000000"
               }`}
@@ -107,12 +122,12 @@ const PartySeatTable = ({
   handleIncrement,
   handleDecrement,
 }: {
-    partySeats: Map<string, number>;
-    ncmpCount: Map<string, number> | undefined;
-    oppositionSeatsCount: number;
-    handleIncrement: (party: string) => void;
-    handleDecrement: (party: string) => void;
-  }) => {
+  partySeats: Map<string, number>;
+  ncmpCount: Map<string, number> | undefined;
+  oppositionSeatsCount: number;
+  handleIncrement: (party: string) => void;
+  handleDecrement: (party: string) => void;
+}) => {
   return (
     <Table>
       <TableHeader>
@@ -140,33 +155,32 @@ const PartySeatTable = ({
 };
 
 const PartySeatTableContainer = ({
-    partySeats,
-    ncmpCount,
-    oppositionSeatsCount,
-    handleIncrement,
-    handleDecrement,
-  }: {
-      partySeats: Map<string, number>;
-      ncmpCount: Map<string, number> | undefined;
-      oppositionSeatsCount: number;
-      handleIncrement: (party: string) => void;
-      handleDecrement: (party: string) => void;
-    }) => {
+  partySeats,
+  ncmpCount,
+  oppositionSeatsCount,
+  handleIncrement,
+  handleDecrement,
+}: {
+  partySeats: Map<string, number>;
+  ncmpCount: Map<string, number> | undefined;
+  oppositionSeatsCount: number;
+  handleIncrement: (party: string) => void;
+  handleDecrement: (party: string) => void;
+}) => {
   return (
     <>
-            <WarningBanner
-              partySeats={partySeats}
-              ncmpCount={ncmpCount}
-              oppositionSeatsCount={oppositionSeatsCount}
-            />
-            <PartySeatTable
-              partySeats={partySeats}
-              ncmpCount={ncmpCount}
-              oppositionSeatsCount={oppositionSeatsCount}
-              handleIncrement={handleIncrement}
-              handleDecrement={handleDecrement}
-            />
-
+      <WarningBanner
+        partySeats={partySeats}
+        ncmpCount={ncmpCount}
+        oppositionSeatsCount={oppositionSeatsCount}
+      />
+      <PartySeatTable
+        partySeats={partySeats}
+        ncmpCount={ncmpCount}
+        oppositionSeatsCount={oppositionSeatsCount}
+        handleIncrement={handleIncrement}
+        handleDecrement={handleDecrement}
+      />
     </>
   );
 };

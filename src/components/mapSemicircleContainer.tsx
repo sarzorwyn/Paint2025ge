@@ -1,7 +1,7 @@
 "use client";
 import MapElement from "./map/mapElement";
 import { constituencies } from "@/lib/constituencies";
-import { useMemo, useState } from "react";
+import { useCallback, useMemo, useState } from "react";
 import ParliamentSemicircle from "./parliamentSemicircle";
 import { maxNCMPs, politicalParties, vacantParty } from "@/lib/politicalParties";
 import PartySeatTableContainer from "./partySeatTable";
@@ -50,19 +50,19 @@ const MapSemicircleContainer = () => {
     return oppositionSeats;
   }, [partySeats]);
 
-  const updateArea = (areaId: number, party: string) => {
+  const updateArea = useCallback((areaId: string, party: string) => {
     setPartyAreas((prev) => {
       const newPartyAreas = new Map(prev);
-      const code = constituencies.find(({ id }) => id === areaId)?.code;
+      const code = constituencies.find(({ id }) => id === Number(areaId))?.code;
 
       if (code !== undefined) {
         newPartyAreas.set(code, party);
       }
       return newPartyAreas;
     });
-  };
+  }, []);
 
-  const handleNcmpIncrement = (party: string) => {
+  const handleNcmpIncrement = useCallback((party: string) => {
     setNcmpCount((prev) => {
       if (oppositionSeatsCount >= maxNCMPs) {
         return prev;
@@ -72,9 +72,9 @@ const MapSemicircleContainer = () => {
       newNCMPs.set(party, (newNCMPs.get(party) || 0) + 1);
       return newNCMPs;
     });
-  };
+  }, [oppositionSeatsCount]);
 
-  const handleNcmpDecrement = (party: string) => {
+  const handleNcmpDecrement = useCallback((party: string) => {
     setNcmpCount((prev) => {
       if ((prev?.get(party) || 0) <= 0) {
         return prev;
@@ -84,10 +84,10 @@ const MapSemicircleContainer = () => {
       newNCMPs.set(party, (newNCMPs.get(party) || 0) - 1);
       return newNCMPs;
     });
-  };
+  }, []);
 
   return (
-    <div className="relative flex  max-w-5xl w-full mx-auto flex-col gap-x-2 gap-y-25 sm:gap-y-45 md:gap-y-20 ">
+    <div className="relative flex  max-w-5xl w-full mx-auto flex-col gap-x-2 gap-y-55 md:gap-y-20 ">
       <div className="h-[37rem] max-md:h-[26rem] max-md:min-h-[26rem]  xl:flex-row">
         {" "}
         <MapElement
@@ -97,7 +97,7 @@ const MapSemicircleContainer = () => {
         />
       </div>
 
-      <div className="flex justify-center pt-[5%] mt-30 sm:mt-40 md:my-8  md:pr-10 md:pl-10 flex-col">
+      <div className="flex justify-center mt-5  flex-col">
         <PartySeatTableContainer
           partySeats={partySeats}
           ncmpCount={ncmpCount}

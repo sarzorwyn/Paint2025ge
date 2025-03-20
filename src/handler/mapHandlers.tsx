@@ -1,7 +1,5 @@
 import { constituencies } from "@/lib/constituencies";
-import { politicalParties } from "@/lib/politicalParties";
 import { Map } from "mapbox-gl";
-import { RefObject } from "react";
 
 export const handleMapClick = (
   map: Map,
@@ -16,8 +14,8 @@ export const handleMapClick = (
       { selected: false }
     );
   }
-  if (e && e.features.length > 0) {
-    newSelectedPolygonId = e.features[0].id;
+  if (e && e.features!.length > 0) {
+    newSelectedPolygonId = e.features![0].id!;
 
     if (selectedParty == null) {
       map.setFeatureState(

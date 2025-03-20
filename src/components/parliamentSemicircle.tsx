@@ -1,21 +1,28 @@
 import parliamentSVG from "parliament-svg";
 import { toHtml } from "hast-util-to-html";
 import { getPartyColor } from "@/handler/partyColorHandlers";
-import { Accordion, AccordionContent, AccordionItem, AccordionTrigger } from "./ui/accordion";
+import {
+  Accordion,
+  AccordionContent,
+  AccordionItem,
+  AccordionTrigger,
+} from "./ui/accordion";
 import AccordionMotion from "./ui/accordionMotion";
 
-
-
 const Semicircle = ({
-  partySeatsColors
+  partySeatsColors,
 }: {
   partySeatsColors: { [key: string]: { seats: number; colour: string } };
 }) => {
   const svg = toHtml(parliamentSVG(partySeatsColors, true));
 
   return (
-    <Accordion type="single" collapsible>
-      <AccordionItem className=" sm:w-[40rem]" value="item-1">
+    <Accordion
+      type="single"
+      collapsible
+      className="sm:w-[40rem] w-full -mt-40 md:mt-0"
+    >
+      <AccordionItem value="item-1">
         <AccordionTrigger>Parliament Diagram</AccordionTrigger>
         <AccordionContent asChild>
           <AccordionMotion>
@@ -36,8 +43,7 @@ const ParliamentSemicircle = ({
     {};
 
   partySeats.forEach((seats, partyName) => {
-    const partyColor =
-      getPartyColor(partyName)?.hex || "#d1d5dc ";
+    const partyColor = getPartyColor(partyName)?.hex || "#d1d5dc ";
     partySeatsColors[partyName] = { seats: Number(seats), colour: partyColor };
   });
 
