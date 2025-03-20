@@ -14,7 +14,7 @@ import { politicalParties } from "@/lib/politicalParties";
 import { Menu } from "lucide-react";
 import Image from "next/image";
 
-const getButtonColor = (party) => {
+const getButtonColor = (party: string | null) => {
   return (getPartyColor(party)?.borderColor || "border-gray-300");
 }
 

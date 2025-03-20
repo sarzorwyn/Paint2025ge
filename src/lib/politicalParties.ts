@@ -22,3 +22,6 @@ export const politicalParties: PoliticalParty[] = [
     { name: "SDP", fullname: "Singapore Democratic Party",  color: {bgColor: "bg-red-900", BorderLColor: "border-l-red-900", borderColor: "border-red-900", hex: "#82181a"}, icon: "/party_logos/sdpLogo.png"},
     { name: "SPP", fullname: "Singapore People's Party",  color: {bgColor: "bg-fuchsia-700", BorderLColor: "border-l-fuchsia-700", borderColor: "border-fuchsia-700", hex: "#A21CAF"}, icon: "/party_logos/sppLogo.png"},
 ];
+
+export const vacantParty: string = "Vacant";
+export const maxNCMPs: number = 12;

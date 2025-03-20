@@ -1,4 +1,4 @@
-import MapElement from "@/components/mapElement";
+import MapElement from "@/components/map/mapElement";
 import MapSemicircleContainer from "@/components/mapSemicircleContainer";
 import { constituencies } from "@/lib/constituencies";
 import { AreaContext } from "@/lib/contexts";

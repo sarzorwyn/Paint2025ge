@@ -1,19 +1,29 @@
-import { politicalParties } from "@/lib/politicalParties";
 import parliamentSVG from "parliament-svg";
 import { toHtml } from "hast-util-to-html";
 import { getPartyColor } from "@/handler/partyColorHandlers";
+import { Accordion, AccordionContent, AccordionItem, AccordionTrigger } from "./ui/accordion";
+import AccordionMotion from "./ui/accordionMotion";
+
+
 
 const Semicircle = ({
-  partySeatsColors,
+  partySeatsColors
 }: {
-  [key: string]: { seats: number; colour: string };
+  partySeatsColors: { [key: string]: { seats: number; colour: string } };
 }) => {
   const svg = toHtml(parliamentSVG(partySeatsColors, true));
 
   return (
-    <div className="h-[10rem] w-[40rem] ">
-      <div dangerouslySetInnerHTML={{ __html: svg }} />
-    </div>
+    <Accordion type="single" collapsible>
+      <AccordionItem className=" sm:w-[40rem]" value="item-1">
+        <AccordionTrigger>Parliament Diagram</AccordionTrigger>
+        <AccordionContent asChild>
+          <AccordionMotion>
+            <div dangerouslySetInnerHTML={{ __html: svg }} />
+          </AccordionMotion>
+        </AccordionContent>
+      </AccordionItem>
+    </Accordion>
   );
 };
 

@@ -4,14 +4,14 @@ import { Map } from "mapbox-gl";
 import { RefObject } from "react";
 
 export const handleMapClick = (
-  mapRef: RefObject<Map>,
+  map: Map,
   selectedParty: string | null,
   e: mapboxgl.MapMouseEvent,
   selectedPolygonId: string | null
 ) => {
   let newSelectedPolygonId = null;
   if (selectedPolygonId !== null) {
-    mapRef.current.setFeatureState(
+    map.setFeatureState(
       { source: "elecBoundsSource", id: selectedPolygonId },
       { selected: false }
     );
@@ -19,17 +19,12 @@ export const handleMapClick = (
   if (e && e.features.length > 0) {
     newSelectedPolygonId = e.features[0].id;
 
-    if (selectedParty !== null) {
-      mapRef.current.setFeatureState(
-        { source: "elecBoundsSource", id: newSelectedPolygonId },
-        { party: selectedParty }
-      );
-    } else {
-      mapRef.current.setFeatureState(
+    if (selectedParty == null) {
+      map.setFeatureState(
         { source: "elecBoundsSource", id: newSelectedPolygonId },
         { selected: true }
       );
-      mapRef.current.flyTo({
+      map.flyTo({
         center: e.lngLat,
         zoom: 10.9,
       });

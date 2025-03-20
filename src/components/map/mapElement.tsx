@@ -7,11 +7,10 @@ import React, {
   useRef,
   useState,
 } from "react";
-import mapboxgl from "mapbox-gl";
+import mapboxgl, { DataDrivenPropertyValueSpecification } from "mapbox-gl";
 import "mapbox-gl/dist/mapbox-gl.css";
 import * as TooltipPrimitive from "@radix-ui/react-tooltip";
-import { useMouse } from "../lib/useMouse";
-import { politicalParties } from "@/lib/politicalParties";
+import { useMouse } from "../../lib/useMouse";
 import MapLegend from "./mapLegend";
 import CirclePicker from "./circlePicker";
 import {
@@ -25,7 +24,6 @@ const MapElement = ({
   partyAreas,
   partySeats,
 }: {
-  updateArea: (area: string, party: string) => void;
   partyAreas: Map<string, string | null>;
   partySeats: Map<string, number>;
 }): React.JSX.Element => {
@@ -37,7 +35,7 @@ const MapElement = ({
   const [hoverId, setHoverId] = useState<string | null>(null);
   const [selectedParty, setSelectedParty] = useState<string | null>(null);
 
-  const fillColorExpression = useMemo(
+  const fillColorExpression = useMemo<DataDrivenPropertyValueSpecification<string>>(
     () => [
       "match",
       ["get", "NEW_ED"],
@@ -117,13 +115,13 @@ const MapElement = ({
         },
       });
 
-      mapRef.current?.on("click", (e) => {
-        const features = mapRef.current?.queryRenderedFeatures(e.point);
+      mapRef.current!.on("click", (e) => {
+        const features = mapRef.current.queryRenderedFeatures(e.point);
         // If no features were clicked, it means the background was clicked
         if (features.length === 0) {
           setSelectedParty(null);
           if (selectedPolygonIdRef.current !== null) {
-            mapRef.current?.setFeatureState(
+            mapRef.current.setFeatureState(
               { source: "elecBoundsSource", id: selectedPolygonIdRef.current },
               { selected: false }
             );
@@ -135,65 +133,78 @@ const MapElement = ({
   }, []);
 
   useEffect(() => {
-    mapRef.current.on("click", "elecBounds", (e) => {
+    if (selectedParty !== null) {
+      mapRef.current!.getCanvas().style.cursor = "crosshair";
+    } else {
+      mapRef.current!.getCanvas().style.cursor = "grab";
+    }
+
+    const handleMouseMove = (e) => {
+      if (e.features.length > 0) {
+      if (selectedParty === null) {
+        mapRef.current!.getCanvas().style.cursor = "pointer";
+      } else {
+        mapRef.current!.getCanvas().style.cursor = "crosshair";
+      }
+      if (hoveredPolygonId !== null) {
+        mapRef.current!.setFeatureState(
+        { source: "elecBoundsSource", id: hoveredPolygonId },
+        { hover: false }
+        );
+      }
+      hoveredPolygonId = e.features[0].id!;
+      mapRef.current?.setFeatureState(
+        { source: "elecBoundsSource", id: hoveredPolygonId! },
+        { hover: true }
+      );
+
+      setHoverId(e.features[0].properties.NEW_ED);
+      }
+    };
+
+    const handleMouseLeave = () => {
+      if (selectedParty === null) {
+      mapRef.current!.getCanvas().style.cursor = "grab";
+      } else {
+      mapRef.current!.getCanvas().style.cursor = "crosshair";
+      }
+      if (hoveredPolygonId !== null) {
+      mapRef.current!.setFeatureState(
+        { source: "elecBoundsSource", id: hoveredPolygonId },
+        { hover: false }
+      );
+      }
+      hoveredPolygonId = null;
+      setHoverId(null);
+    };
+
+    const handleClickMap = (e) => {
       selectedPolygonIdRef.current = handleMapClick(
-        mapRef,
+        mapRef.current,
         selectedParty,
         e,
         selectedPolygonIdRef.current
       );
-      updateArea(selectedPolygonIdRef.current, selectedParty);
-    });
-
-    mapRef.current?.on("mousemove", "elecBounds", (e) => {
-      if (e.features.length > 0) {
-        if (selectedParty === null) {
-          mapRef.current.getCanvas().style.cursor = "pointer";
-        } else {
-          mapRef.current.getCanvas().style.cursor = "crosshair";
-        }
-        if (hoveredPolygonId !== null) {
-          mapRef.current.setFeatureState(
-            { source: "elecBoundsSource", id: hoveredPolygonId },
-            { hover: false }
-          );
-        }
-        hoveredPolygonId = e.features[0].id;
-        mapRef.current?.setFeatureState(
-          { source: "elecBoundsSource", id: hoveredPolygonId },
-          { hover: true }
-        );
-
-        setHoverId(e.features[0].properties.NEW_ED);
+      if (selectedParty !== null && selectedPolygonIdRef.current !== null) {
+        updateArea(selectedPolygonIdRef.current, selectedParty);
       }
-    });
+    };
 
-    mapRef.current.on("mouseleave", "elecBounds", () => {
-      if (selectedParty === null) {
-        mapRef.current.getCanvas().style.cursor = "grab";
-      } else {
-        mapRef.current.getCanvas().style.cursor = "crosshair";
-      }
-      if (hoveredPolygonId !== null) {
-        mapRef.current.setFeatureState(
-          { source: "elecBoundsSource", id: hoveredPolygonId },
-          { hover: false }
-        );
-      }
-      hoveredPolygonId = null;
-      setHoverId(null);
-    });
+    mapRef.current?.on("click", "elecBounds", handleClickMap);
+    mapRef.current?.on("mousemove", "elecBounds", handleMouseMove);
+    mapRef.current?.on("mouseleave", "elecBounds", handleMouseLeave);
 
-    if (selectedParty !== null) {
-      mapRef.current.getCanvas().style.cursor = "crosshair";
-    } else {
-      mapRef.current.getCanvas().style.cursor = "grab";
-    }
+
+    return () => {
+      mapRef.current?.off("mousemove", "elecBounds", handleMouseMove);
+      mapRef.current?.off("mouseleave", "elecBounds", handleMouseLeave);
+      mapRef.current?.off("click", "elecBounds", handleClickMap);
+    };
   }, [selectedParty]);
 
   const handlePickerSelect = useCallback(
     (e: { currentTarget: { id: React.SetStateAction<null> } | null }) => {
-      if (e.currentTarget === null) {
+      if (e.currentTarget == null) {
         setSelectedParty(null);
       } else {
         setSelectedParty(e.currentTarget.id);
