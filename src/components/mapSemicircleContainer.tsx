@@ -10,8 +10,7 @@ import {
 } from "@/lib/politicalParties";
 import PartySeatTableContainer from "./partySeatTable";
 import { useRouter, useSearchParams } from "next/navigation";
-import { strToU8, compressSync } from "fflate";
-import { parseStateFromUrl } from "@/handler/parseStateFromUrl";
+import { getStateQuery, parseStateFromUrl } from "@/handler/parseStateFromUrl";
 
 const MapSemicircleContainer = () => {
   const searchParams = useSearchParams();
@@ -19,30 +18,15 @@ const MapSemicircleContainer = () => {
     parseStateFromUrl(
       searchParams.get("partyAreas"),
       constituencies.map(({ code }) => [code, null])
-    )
+    ) as Map<string, string | null>
   );
   const [ncmpCount, setNcmpCount] = useState<Map<string, number>>(
-    parseStateFromUrl(searchParams.get("ncmpCount"), [])
+    parseStateFromUrl(searchParams.get("ncmpCount"), []) as Map<string, number>
   );
   const router = useRouter();
 
   useEffect(() => {
-    const encodeState = (state: Map<string, string | null | number>) => {
-      const jsonString = JSON.stringify(Object.fromEntries(state));
-      const compressed = compressSync(strToU8(jsonString));
-
-      return btoa(String.fromCharCode(...compressed));
-    };
-
-    const query = new URLSearchParams();
-    if (partyAreas.size > 0) {
-      query.set("partyAreas", encodeState(partyAreas));
-    }
-
-    if (ncmpCount!.size > 0) {
-      query.set("ncmpCount", encodeState(ncmpCount!));
-    }
-
+    const query = getStateQuery(partyAreas, ncmpCount);
     router.replace(`?${query.toString()}`, { scroll: false });
   }, [partyAreas, ncmpCount, router]);
 
@@ -50,8 +34,9 @@ const MapSemicircleContainer = () => {
     const partyToSeats = new Map<string, number>(
       politicalParties.map(({ name }) => [name, 0])
     );
+
     partyAreas.forEach((party, areaCode) => {
-      if (party) {
+      if (party != null) {
         partyToSeats.set(
           party,
           (constituencies.find(({ code }) => code === areaCode)?.seats || 0) +

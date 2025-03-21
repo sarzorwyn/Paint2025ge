@@ -5,7 +5,7 @@ export const createMap = (mapContainer: HTMLDivElement) => (
         container: mapContainer,
         style: "mapbox://styles/mapbox/empty-v9",
         center: [103.81861913147856, 1.3526551622117324],
-        zoom: 10.3,
+        zoom: 10,
         minZoom: 9,
         maxZoom: 12.5,
         logoPosition: "bottom",
@@ -58,5 +58,10 @@ export const mapLoadProperties = (map: Map, fillColorExpression: DataDrivenPrope
             1,
           ],
         },
+    });
+
+    map.easeTo({
+      zoom: 10.3,
+      duration: 3000
     });
 }
