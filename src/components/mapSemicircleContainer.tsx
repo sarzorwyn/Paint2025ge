@@ -11,7 +11,7 @@ import {
 import PartySeatTableContainer from "./partySeatTable";
 import { useRouter, useSearchParams } from "next/navigation";
 import { getStateQuery, parseStateFromUrl } from "@/handler/parseStateFromUrl";
-import MapButtons from "./mapButtons";
+import MapButtons from "./mapButtons/mapButtons";
 
 
 const MapSemicircleContainer = () => {
