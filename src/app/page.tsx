@@ -10,7 +10,7 @@ export default function Home() {
           <div className="text-center my-7">     
             <h1 className="scroll-m-20 font-bold tracking-tight text-5xl">Paint25ge</h1>
             <p className="text-l text-muted-foreground mt-10">
-              Paint the GE 2025 map with all possible combinations of seats for each party
+              Paint the GE 2025 map with all possible combinations of seats.
             </p>
           </div>
             <div className="flex h-full w-full flex-col">

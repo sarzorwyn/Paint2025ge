@@ -6,9 +6,15 @@ import { Button } from "./ui/button";
 import { SquarePlus, SquareMinus } from "lucide-react";
 import { cn } from "@/lib/utils";
 import WarningBanner from "./ncmpWarningBanner";
-import { maxNCMPs, vacantParty } from "@/lib/politicalParties";
+import {
+  maxNCMPs,
+  politicalParties,
+  vacantParty,
+} from "@/lib/politicalParties";
 import TableMotion from "./ui/tableMotion";
 import { motion } from "framer-motion";
+import { HoverCard, HoverCardContent, HoverCardTrigger } from "./ui/hover-card";
+import PartyIcon from "./partyIcon";
 
 const hasNoSeats = (
   partySeats: Map<string, number> | undefined,
@@ -27,6 +33,29 @@ const canAddNcmp = (
   party !== largestParty &&
   (ncmpCount ? Array.from(ncmpCount.values()).reduce((a, b) => a + b, 0) : 0) <
     maxNCMPs;
+
+const PartyDetailsHover = ({ partyShortName }: { partyShortName: string }) => {
+  const partyDetails = politicalParties.find(
+    ({ name }) => name === partyShortName
+  );
+  if (!partyDetails) {
+    return <>{partyShortName}</>;
+  }
+
+  return (
+    <HoverCard>
+      <HoverCardTrigger>{partyShortName}</HoverCardTrigger>
+      <HoverCardContent side="right" align="center" asChild>
+        <div className="w-auto p-2 ">
+          <span className="text-sm flex flex-col items-center space-x-2">
+            <PartyIcon iconUrl={partyDetails.icon} />
+            {partyDetails.fullname}
+          </span>{" "}
+        </div>
+      </HoverCardContent>
+    </HoverCard>
+  );
+};
 
 const PartySeatTableBody = ({
   partySeats,
@@ -52,7 +81,7 @@ const PartySeatTableBody = ({
           hasNoSeats(partySeats, party) && "text-gray-400"
         }`}
       >
-        {party}
+        <PartyDetailsHover partyShortName={party} />
       </TableCell>
       <TableCell className="font-semibold ">
         <div className="relative flex flex-row justify-end items-center gap-2">
@@ -126,7 +155,15 @@ const PartySeatTable = ({
           <TableHead className="w-fit">Party</TableHead>
           <TableHead>
             <div className="relative flex justify-end items-center gap-2 pr-7">
-              NCMPs
+              <HoverCard>
+                <HoverCardTrigger>NCMPs</HoverCardTrigger>
+
+                <HoverCardContent>
+                  <div className="text-sm">
+                  Opposition candidates who lost in a general election but enter Parliament as the best-performing losers, 
+                  <span className="font-bold"> ensuring at least 12 opposition MPs in total.</span></div>
+                </HoverCardContent>
+              </HoverCard>
             </div>
           </TableHead>
           <TableHead className="max-w-0.5 text-right">Seats</TableHead>
