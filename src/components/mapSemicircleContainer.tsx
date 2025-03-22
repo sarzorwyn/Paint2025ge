@@ -11,7 +11,7 @@ import {
 import PartySeatTableContainer from "./partySeatTable";
 import { useRouter, useSearchParams } from "next/navigation";
 import { getStateQuery, parseStateFromUrl } from "@/handler/parseStateFromUrl";
-import ResetButton from "./resetButton";
+import MapButtons from "./mapButtons";
 
 
 const MapSemicircleContainer = () => {
@@ -119,7 +119,7 @@ const MapSemicircleContainer = () => {
   return (
     <div className="relative flex  max-w-5xl w-full mx-auto flex-col gap-x-2">
       <div className=" max-md:min-h-[26rem]  xl:flex-row">
-        <ResetButton handleFullReset={handleFullReset}/>
+        <MapButtons handleFullReset={handleFullReset}/>
         <MapElement
           partyAreas={partyAreas}
           partySeats={partySeats}

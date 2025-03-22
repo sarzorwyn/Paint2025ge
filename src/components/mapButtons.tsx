@@ -1,3 +1,4 @@
+import { toast } from "sonner";
 import {
   AlertDialogHeader,
   AlertDialogFooter,
@@ -10,16 +11,24 @@ import {
   AlertDialogAction,
 } from "./ui/alert-dialog";
 import { Button } from "./ui/button";
-import { RotateCcw } from "lucide-react";
+import { Copy, RotateCcw } from "lucide-react";
 
-const ResetButton = ({handleFullReset}: {handleFullReset: () => void}) => {
+const copyToClipboard = async () => {
+  try {
+    await navigator.clipboard.writeText(window.location.href);
+    toast.success("Link Copied!", {
+      description: "The URL has been copied to your clipboard.",
+    });
+  } catch (err) {
+    console.error("Failed to copy: ", err);
+  }
+};
+
+const ResetButton = ({ handleFullReset }: { handleFullReset: () => void }) => {
   return (
     <AlertDialog>
       <AlertDialogTrigger asChild>
-        <Button
-          variant="ghost"
-          className="absolute right-4 -top-2 text-gray-700"
-        >
+        <Button variant="ghost" className=" text-gray-700">
           <RotateCcw />
         </Button>
       </AlertDialogTrigger>
@@ -42,4 +51,15 @@ const ResetButton = ({handleFullReset}: {handleFullReset: () => void}) => {
   );
 };
 
-export default ResetButton;
+const MapButtons = ({ handleFullReset }: { handleFullReset: () => void }) => {
+  return (
+    <div className="absolute right-4 -top-2 grid-flow-row">
+      <Button variant="ghost" onClick={copyToClipboard}>
+        <Copy className="w-4 h-4" />
+      </Button>
+      <ResetButton handleFullReset={handleFullReset} />
+    </div>
+  );
+};
+
+export default MapButtons;
