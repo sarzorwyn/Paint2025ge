@@ -43,8 +43,8 @@ const PartyDetailsHover = ({ partyShortName }: { partyShortName: string }) => {
   }
 
   return (
-    <HoverCard>
-      <HoverCardTrigger>{partyShortName}</HoverCardTrigger>
+    <HoverCard openDelay={100}>
+      <HoverCardTrigger tabIndex={0}>{partyShortName}</HoverCardTrigger>
       <HoverCardContent side="right" align="center" asChild>
         <div className="w-auto p-2 ">
           <span className="text-sm flex flex-col items-center space-x-2">
@@ -155,8 +155,8 @@ const PartySeatTable = ({
           <TableHead className="w-fit">Party</TableHead>
           <TableHead>
             <div className="relative flex justify-end items-center gap-2 pr-7">
-              <HoverCard>
-                <HoverCardTrigger>NCMPs</HoverCardTrigger>
+              <HoverCard openDelay={200}>
+                <HoverCardTrigger tabIndex={0}>NCMPs</HoverCardTrigger>
 
                 <HoverCardContent>
                   <div className="text-sm">

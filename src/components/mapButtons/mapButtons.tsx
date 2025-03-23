@@ -26,7 +26,7 @@ const copyToClipboard = async () => {
     });
   } catch (err) {
     toast.error("Failed to copy: ", {
-      description: String(err),
+      description: "Failed to copy to your clipboard. Please copy the url manually if you would like to share.",
     });
     console.error("Failed to copy: ", err);
   }

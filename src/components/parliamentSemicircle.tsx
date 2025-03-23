@@ -15,7 +15,6 @@ const Semicircle = ({
   partySeatsColors: { [key: string]: { seats: number; colour: string } };
 }) => {
   const svg = toHtml(parliamentSVG(partySeatsColors, true));
-//  items-center justify-center
   return (
     <Accordion
       type="single"

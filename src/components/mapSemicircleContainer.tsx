@@ -1,7 +1,7 @@
 "use client";
 import MapElement from "./map/mapElement";
 import { constituencies } from "@/lib/constituencies";
-import { useCallback, useEffect, useMemo, useState } from "react";
+import { Suspense, useCallback, useEffect, useMemo, useState } from "react";
 import ParliamentSemicircle from "./parliamentSemicircle";
 import {
   maxNCMPs,
@@ -12,9 +12,9 @@ import PartySeatTableContainer from "./partySeatTable";
 import { useRouter, useSearchParams } from "next/navigation";
 import { getStateQuery, parseStateFromUrl } from "@/handler/parseStateFromUrl";
 import MapButtons from "./mapButtons/mapButtons";
+import { Skeleton } from "./ui/skeleton";
 
-
-const MapSemicircleContainer = () => {
+const MapSemicircleElement = () => {
   const searchParams = useSearchParams();
   const [partyAreas, setPartyAreas] = useState<Map<string, string | null>>(
     parseStateFromUrl(
@@ -114,12 +114,12 @@ const MapSemicircleContainer = () => {
   const handleFullReset = () => {
     setPartyAreas(new Map(constituencies.map(({ code }) => [code, null])));
     setNcmpCount(new Map());
-  }
+  };
 
   return (
     <div className="relative flex  max-w-5xl w-full mx-auto flex-col gap-x-2">
       <div className=" max-md:min-h-[26rem]  xl:flex-row">
-        <MapButtons handleFullReset={handleFullReset}/>
+        <MapButtons handleFullReset={handleFullReset} />
         <MapElement
           partyAreas={partyAreas}
           partySeats={partySeats}
@@ -143,5 +143,23 @@ const MapSemicircleContainer = () => {
     </div>
   );
 };
+
+const MapSemicircleContainer = () => (
+  <Suspense
+    fallback={
+      <div className="space-y-4">
+        <Skeleton className="h-10 w-1/3" /> {/* Skeleton for MapButtons */}
+        <Skeleton className="h-[26rem] w-full" />
+        {/* Skeleton for MapElement */}
+        <Skeleton className="h-10 w-1/3" />
+        {/* Skeleton for PartySeatTableContainer */}
+        <Skeleton className="h-10 w-1/3" />
+        {/* Skeleton for ParliamentSemicircle */}
+      </div>
+    }
+  >
+    <MapSemicircleElement />
+  </Suspense>
+);
 
 export default MapSemicircleContainer;

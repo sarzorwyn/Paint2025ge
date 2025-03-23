@@ -24,16 +24,17 @@ export function useMouse<T extends HTMLElement = HTMLElement>(
   }, []);
 
   // Handle mouse movement using native MouseEvent
-  const handleMouseMove = useCallback((event: MouseEvent) => {
+  const handleMouseMove = useCallback((event: Event) => {
+    const mouseEvent = event as MouseEvent;
     if (element) {
       const rect = element.getBoundingClientRect();
       // Calculate coordinates relative to the element
-      const x = Math.max(0, Math.round(event.clientX - rect.left));
-      const y = Math.max(0, Math.round(event.clientY - rect.top));
+      const x = Math.max(0, Math.round(mouseEvent.clientX - rect.left));
+      const y = Math.max(0, Math.round(mouseEvent.clientY - rect.top));
       setPosition({ x, y });
     } else {
       // Fallback: use client coordinates when no element is provided
-      setPosition({ x: event.clientX, y: event.clientY });
+      setPosition({ x: mouseEvent.clientX, y: mouseEvent.clientY });
     }
   }, [element]);
 
