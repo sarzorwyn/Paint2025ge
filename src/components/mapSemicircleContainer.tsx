@@ -53,7 +53,7 @@ const MapSemicircleElement = () => {
   useEffect(() => {
     if (hashLoaded) {
       const query = getStateQuery(partyAreas, ncmpCount);
-      router.replace(`#${query.toString()}`, { scroll: false });
+      router.replace(`?#${query.toString()}`, { scroll: false });
     }
   }, [partyAreas, ncmpCount, router, hashLoaded]);
 
