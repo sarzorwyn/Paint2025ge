@@ -1,4 +1,4 @@
-const PartyIcon = ({ iconUrl }: { iconUrl: String }) => {
+const PartyIcon = ({ iconUrl }: { iconUrl: string }) => {
   return (
     <div className=" rounded-full">
       <div

@@ -1,13 +1,13 @@
 import { constituencies } from "@/lib/constituencies";
-import { Map } from "mapbox-gl";
+import { Map } from "maplibre-gl";
 
 export const handleMapClick = (
   map: Map,
   selectedParty: string | null,
-  e: mapboxgl.MapMouseEvent,
+  e: maplibregl.MapLayerMouseEvent,
   selectedPolygonId: string | null
 ) => {
-  let newSelectedPolygonId = null;
+  let newSelectedPolygonId: string | null = null;
   if (selectedPolygonId !== null) {
     map.setFeatureState(
       { source: "elecBoundsSource", id: selectedPolygonId },
@@ -15,7 +15,7 @@ export const handleMapClick = (
     );
   }
   if (e && e.features!.length > 0) {
-    newSelectedPolygonId = e.features![0].id!;
+    newSelectedPolygonId = String(e.features![0].id!);
 
     if (selectedParty == null) {
       map.setFeatureState(

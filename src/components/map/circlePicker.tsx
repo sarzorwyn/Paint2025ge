@@ -18,7 +18,7 @@ const getButtonColor = (party: string | null) => {
   return (getPartyColor(party)?.borderColor || "border-gray-300");
 }
 
-export default function CirclePicker({ onSelect, selectedParty } : { onSelect: (e: { currentTarget: { id: React.SetStateAction<null> } | null }) => void, selectedParty: string | null }) {
+export default function CirclePicker({ onSelect, selectedParty } : { onSelect: (e:  React.MouseEvent<Element, MouseEvent>) => void, selectedParty: string | null }) {
   return (
     <div className="absolute top-4 right-4 z-50">
       <DropdownMenu>

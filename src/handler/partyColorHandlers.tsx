@@ -1,6 +1,6 @@
 import { politicalParties } from "@/lib/politicalParties";
 
-export const getPartyColor = (party: string | null) => (politicalParties.find((polParty) => polParty.name === party)?.color)
+export const getPartyColor = (party: string | null | undefined) => (politicalParties.find((polParty) => polParty.name === party)?.color)
 
 export const getHexPartyColor = (party: string | null) => {
   return (
@@ -9,9 +9,9 @@ export const getHexPartyColor = (party: string | null) => {
   );
 };
 
-export const getHoverColor = (selectedParty: string | null, hoverId: string | null, partyAreas: Map<string, string>) => {
+export const getHoverColor = (selectedParty: string | null, hoverId: string | null, partyAreas: Map<string, string| null>) => {
   return getPartyColor(selectedParty)?.BorderLColor 
-  || getPartyColor(partyAreas.get(hoverId))?.BorderLColor
+  || getPartyColor(partyAreas.get(hoverId!))?.BorderLColor
   || "bg-gray-300";
 }
 

@@ -7,8 +7,8 @@ import React, {
   useRef,
   useState,
 } from "react";
-import mapboxgl, { DataDrivenPropertyValueSpecification } from "mapbox-gl";
-import "mapbox-gl/dist/mapbox-gl.css";
+import maplibregl, { DataDrivenPropertyValueSpecification, ExpressionSpecification } from "maplibre-gl";
+import "maplibre-gl/dist/maplibre-gl.css";
 import * as TooltipPrimitive from "@radix-ui/react-tooltip";
 import { useMouse } from "../../lib/useMouse";
 import MapLegend from "./mapLegend";
@@ -27,16 +27,13 @@ const MapElement = ({
   partySeats: Map<string, number>;
 }): React.JSX.Element => {
   const mapContainerRef = useRef<HTMLDivElement>(null);
-  const mapRef = useRef<mapboxgl.Map>(null);
+  const mapRef = useRef<maplibregl.Map>(null);
   const { x, y, tooltipRef } = useMouse<HTMLDivElement>();
-  let hoveredPolygonId: string | number | null = null;
   const selectedPolygonIdRef = useRef<null | string>(null);
   const [hoverId, setHoverId] = useState<string | null>(null);
   const [selectedParty, setSelectedParty] = useState<string | null>(null);
 
-  const fillColorExpression = useMemo<
-    DataDrivenPropertyValueSpecification<string>
-  >(
+  const fillColorExpression = useMemo<DataDrivenPropertyValueSpecification<string>>(
     () => [
       "match",
       ["get", "NEW_ED"],
@@ -44,7 +41,7 @@ const MapElement = ({
         return [pArea[0], getHexPartyColor(pArea[1])];
       }),
       "#e0e0ff", // Default color
-    ],
+    ] as unknown as ExpressionSpecification,
     [partyAreas]
   );
 
@@ -57,14 +54,12 @@ const MapElement = ({
   }, [fillColorExpression]);
 
   useEffect(() => {
-    mapboxgl.accessToken = process.env.NEXT_PUBLIC_MAPBOX_API;
-
     mapRef.current = createMap(mapContainerRef.current!);
     mapRef.current!.on("load", () => {
       mapLoadProperties(mapRef.current!, fillColorExpression);
     });
 
-    const handleClickEmpty = (e) => {
+    const handleClickEmpty = (e: maplibregl.MapMouseEvent) => {
       const features = mapRef.current!.queryRenderedFeatures(e.point);
       // If no features were clicked, it means the background was clicked
       if (features.length === 0) {
@@ -87,14 +82,17 @@ const MapElement = ({
   }, []);
 
   useEffect(() => {
+    let hoveredPolygonId: string | number | null = null;
+
     if (selectedParty !== null) {
       mapRef.current!.getCanvas().style.cursor = "crosshair";
     } else {
       mapRef.current!.getCanvas().style.cursor = "grab";
     }
 
-    const handleMouseMove = (e) => {
-      if (e.features.length > 0) {
+    const handleMouseMove = (e: maplibregl.MapLayerMouseEvent) => {
+      const features = e.features;
+      if (features && features.length > 0) {
         if (selectedParty === null) {
           mapRef.current!.getCanvas().style.cursor = "pointer";
         } else {
@@ -106,13 +104,15 @@ const MapElement = ({
             { hover: false }
           );
         }
-        hoveredPolygonId = e.features[0].id!;
+        hoveredPolygonId = features[0].id!;
         mapRef.current?.setFeatureState(
           { source: "elecBoundsSource", id: hoveredPolygonId! },
           { hover: true }
         );
 
-        setHoverId(e.features[0].properties.NEW_ED);
+        if (features[0].properties) {
+          setHoverId(features[0].properties.NEW_ED);
+        }
       }
     };
 
@@ -132,9 +132,9 @@ const MapElement = ({
       setHoverId(null);
     };
 
-    const handleClickMap = (e) => {
+    const handleClickMap = (e: maplibregl.MapMouseEvent) => {
       selectedPolygonIdRef.current = handleMapClick(
-        mapRef.current,
+        mapRef.current!,
         selectedParty,
         e,
         selectedPolygonIdRef.current
@@ -153,10 +153,10 @@ const MapElement = ({
       mapRef.current?.off("mouseleave", "elecBounds", handleMouseLeave);
       mapRef.current?.off("click", "elecBounds", handleClickMap);
     };
-  }, [selectedParty]);
+  }, [selectedParty, updateArea]);
 
   const handlePickerSelect = useCallback(
-    (e: { currentTarget: { id: React.SetStateAction<null> } | null }) => {
+    (e: React.MouseEvent<Element, MouseEvent>) => {
       if (e.currentTarget == null) {
         setSelectedParty(null);
       } else {

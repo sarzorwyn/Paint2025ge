@@ -1,14 +1,17 @@
-import mapboxgl, { DataDrivenPropertyValueSpecification, Map } from "mapbox-gl";
+import maplibregl, { DataDrivenPropertyValueSpecification, Map } from "maplibre-gl";
 
 export const createMap = (mapContainer: HTMLDivElement) => (
-    new mapboxgl.Map({
+    new maplibregl.Map({
         container: mapContainer,
-        style: "mapbox://styles/mapbox/empty-v9",
+        style: {
+          version: 8,
+          sources: {},
+          layers: []
+      },
         center: [103.81861913147856, 1.3526551622117324],
         zoom: 10,
         minZoom: 9,
         maxZoom: 12.5,
-        logoPosition: "bottom",
     })
 )
 

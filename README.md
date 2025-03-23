@@ -1,5 +1,4 @@
-This is a [Next.js](https://nextjs.org) project bootstrapped with [`create-next-app`](https://nextjs.org/docs/app/api-reference/cli/create-next-app).
-
+Paint2025ge is a visualiser tool that seeks to help show the possible outcomes with Singapore's modified Westminster Parliamentary System.
 ## Getting Started
 
 First, run the development server:
