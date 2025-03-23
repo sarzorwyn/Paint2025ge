@@ -7,7 +7,10 @@ import React, {
   useRef,
   useState,
 } from "react";
-import maplibregl, { DataDrivenPropertyValueSpecification, ExpressionSpecification } from "maplibre-gl";
+import maplibregl, {
+  DataDrivenPropertyValueSpecification,
+  ExpressionSpecification,
+} from "maplibre-gl";
 import "maplibre-gl/dist/maplibre-gl.css";
 import * as TooltipPrimitive from "@radix-ui/react-tooltip";
 import { useMouse } from "../../lib/useMouse";
@@ -33,25 +36,20 @@ const MapElement = ({
   const [hoverId, setHoverId] = useState<string | null>(null);
   const [selectedParty, setSelectedParty] = useState<string | null>(null);
 
-  const fillColorExpression = useMemo<DataDrivenPropertyValueSpecification<string>>(
-    () => [
-      "match",
-      ["get", "NEW_ED"],
-      ...[...partyAreas].flatMap((pArea) => {
-        return [pArea[0], getHexPartyColor(pArea[1])];
-      }),
-      "#e0e0ff", // Default color
-    ] as unknown as ExpressionSpecification,
+  const fillColorExpression = useMemo<
+    DataDrivenPropertyValueSpecification<string>
+  >(
+    () =>
+      [
+        "match",
+        ["get", "NEW_ED"],
+        ...[...partyAreas].flatMap((pArea) => {
+          return [pArea[0], getHexPartyColor(pArea[1])];
+        }),
+        "#e0e0ff", // Default color
+      ] as unknown as ExpressionSpecification,
     [partyAreas]
   );
-
-  useEffect(() => {
-    mapRef.current?.setPaintProperty(
-      "elecBounds",
-      "fill-color",
-      fillColorExpression
-    );
-  }, [fillColorExpression]);
 
   useEffect(() => {
     mapRef.current = createMap(mapContainerRef.current!);
@@ -82,7 +80,19 @@ const MapElement = ({
     mapRef.current!.on("load", () => {
       mapLoadProperties(mapRef.current!, fillColorExpression);
     });
-  }, [fillColorExpression])
+
+    if (mapRef.current?.loaded) {
+      try {
+        mapRef.current?.setPaintProperty(
+          "elecBounds",
+          "fill-color",
+          fillColorExpression
+        );
+      } catch (error) {
+        console.error("Failed to set paint property:", error);
+      }
+    }
+  }, [fillColorExpression]);
 
   useEffect(() => {
     let hoveredPolygonId: string | number | null = null;

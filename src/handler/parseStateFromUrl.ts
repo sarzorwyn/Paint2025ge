@@ -6,15 +6,15 @@ interface InitEntry {
   [key: string]: string | null | number;
 }
 
-export const parseStateFromUrl = <T>(param: string | null, init: [string, T][]): Map<string, T> => {
-  if (!param) return new Map(init);
+export const parseStateFromUrl = <T>(param: string | null): Map<string, T> | null => {
+  if (!param) return null;
 
   try {
     const decodedBytes: Uint8Array = decompressSync(Uint8Array.from(atob(param), c => c.charCodeAt(0)));
     const decodedStr: string = strFromU8(decodedBytes);
     const parsed: InitEntry = JSON.parse(decodedStr);
 
-    if (typeof parsed !== "object" || parsed === null) return new Map(init);
+    if (typeof parsed !== "object" || parsed === null) return null;
 
     const map: Map<string, T> = new Map<string, T>();
 
@@ -28,7 +28,7 @@ export const parseStateFromUrl = <T>(param: string | null, init: [string, T][]):
 
     return map;
   } catch {
-    return new Map(init);
+    return null;
   }
 };
 
@@ -41,11 +41,11 @@ export const getStateQuery = (partyAreas: Map<string, string | null>, ncmpCount:
     };
 
     const query = new URLSearchParams();
-    if (Array.from(partyAreas.values()).some(value => value !== null)) {
+    if (partyAreas && Array.from(partyAreas.values()).some(value => value !== null)) {
       query.set("partyAreas", encodeState(partyAreas));
     }
 
-    if (Array.from(ncmpCount.values()).some(value => value > 0)) {
+    if (ncmpCount && Array.from(ncmpCount.values()).some(value => value > 0)) {
       query.set("ncmpCount", encodeState(ncmpCount!));
     }
 

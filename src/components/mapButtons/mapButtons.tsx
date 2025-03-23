@@ -1,4 +1,3 @@
-import { toast } from "sonner";
 import {
   AlertDialogHeader,
   AlertDialogFooter,
@@ -11,26 +10,12 @@ import {
   AlertDialogAction,
 } from "../ui/alert-dialog";
 import { Button } from "../ui/button";
-import { Copy, RotateCcw } from "lucide-react";
+import { RotateCcw, Share } from "lucide-react";
 import {
   HoverCard,
   HoverCardTrigger,
   HoverCardContent,
 } from "../ui/hover-card";
-
-const copyToClipboard = async () => {
-  try {
-    await navigator.clipboard.writeText(window.location.href);
-    toast.success("Link Copied!", {
-      description: "The URL has been copied to your clipboard. Share this link to let others see your map!",
-    });
-  } catch (err) {
-    toast.error("Failed to copy: ", {
-      description: "Failed to copy to your clipboard. Please copy the url manually if you would like to share.",
-    });
-    console.error("Failed to copy: ", err);
-  }
-};
 
 const ResetButton = ({ handleFullReset }: { handleFullReset: () => void }) => {
   return (
@@ -66,11 +51,11 @@ const ResetButton = ({ handleFullReset }: { handleFullReset: () => void }) => {
   );
 };
 
-const CopyButton = () => (
+const ShareButton = ({handleShareMap} : { handleShareMap: () => void }) => (
   <HoverCard>
     <HoverCardTrigger asChild>
-      <Button variant="ghost" onClick={copyToClipboard}>
-        <Copy className="w-4 h-4" />
+      <Button variant="ghost" onClick={handleShareMap}>
+        <Share className="w-4 h-4" />
       </Button>
     </HoverCardTrigger>
     <HoverCardContent className="text-sm">
@@ -79,10 +64,10 @@ const CopyButton = () => (
   </HoverCard>
 );
 
-const MapButtons = ({ handleFullReset }: { handleFullReset: () => void }) => {
+const MapButtons = ({ handleFullReset, handleShareMap }: { handleFullReset: () => void, handleShareMap: () => void }) => {
   return (
     <div className="absolute right-4 -top-2 grid-flow-row">
-      <CopyButton />
+      <ShareButton handleShareMap={handleShareMap}/>
       <ResetButton handleFullReset={handleFullReset} />
     </div>
   );

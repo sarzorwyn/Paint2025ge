@@ -9,12 +9,14 @@ import {
   vacantParty,
 } from "@/lib/politicalParties";
 import PartySeatTableContainer from "./partySeatTable";
-import { useRouter } from "next/navigation";
+import { useRouter, useSearchParams } from "next/navigation";
 import { getStateQuery, parseStateFromUrl } from "@/handler/parseStateFromUrl";
 import MapButtons from "./mapButtons/mapButtons";
 import { Skeleton } from "./ui/skeleton";
+import { toast } from "sonner";
 
 const MapSemicircleElement = () => {
+  const searchParams = useSearchParams();
   const [hashLoaded, setHashLoaded] = useState(false);
   const [partyAreas, setPartyAreas] = useState<Map<string, string | null>>(
     new Map(constituencies.map(({ code }) => [code, null]))
@@ -22,6 +24,7 @@ const MapSemicircleElement = () => {
   const [ncmpCount, setNcmpCount] = useState<Map<string, number>>(new Map([]));
   const router = useRouter();
 
+  // Replace url if invalid on load
   useEffect(() => {
     let hash = "";
     if (typeof window !== "undefined" && window.location.hash) {
@@ -29,19 +32,23 @@ const MapSemicircleElement = () => {
     }
     const hashParams = new URLSearchParams(hash.replace("#", ""));
 
-    setPartyAreas(
-      parseStateFromUrl(
-        hashParams.get("partyAreas"),
-        constituencies.map(({ code }) => [code, null])
-      ) as Map<string, string | null>
+    const getUrlPartyAreas = parseStateFromUrl(searchParams.get("partyAreas")) || parseStateFromUrl(hashParams.get("partyAreas"));
+    if (getUrlPartyAreas) {
+      setPartyAreas(getUrlPartyAreas as Map<string, string | null>);
+    }
+
+    const getUrlNcmpCount = parseStateFromUrl(searchParams.get("ncmpCount")) || parseStateFromUrl(hashParams.get("ncmpCount"));
+    if (getUrlNcmpCount) {
+      setNcmpCount(getUrlNcmpCount as Map<string, number>);
+    }
+    const query = getStateQuery(
+      getUrlPartyAreas as Map<string, string | null>,
+      getUrlNcmpCount as Map<string, number>
     );
 
-    setNcmpCount(
-      parseStateFromUrl(hashParams.get("ncmpCount"), []) as Map<string, number>
-    );
-
+    router.replace(`?#${query.toString()}`, { scroll: false });
     setHashLoaded(true);
-  }, []);
+  }, [router, searchParams]);
 
   useEffect(() => {
     if (hashLoaded) {
@@ -49,6 +56,7 @@ const MapSemicircleElement = () => {
       router.replace(`#${query.toString()}`, { scroll: false });
     }
   }, [partyAreas, ncmpCount, router, hashLoaded]);
+
 
   const partySeats: Map<string, number> = useMemo(() => {
     const partyToSeats = new Map<string, number>(
@@ -134,10 +142,27 @@ const MapSemicircleElement = () => {
     setNcmpCount(new Map());
   };
 
+  const handleShareMap = useCallback(async () => {
+    const query = getStateQuery(partyAreas, ncmpCount);
+    const generatedUrl =  window.location.origin + window.location.pathname + '?' + query
+
+    try {
+      await navigator.clipboard.writeText(generatedUrl);
+      toast.success("Link Copied!", {
+        description: `The URL has been copied to your clipboard. Share this link to let others see your map!`,
+      });
+    } catch (err) {
+      toast.error("Failed to copy: ", {
+        description: `Please copy the url manually if you would like to share. ${generatedUrl}`,
+      });
+      console.error("Failed to copy: ", err);
+    }
+  }, [partyAreas, ncmpCount]);
+
   return (
     <div className="relative flex  max-w-5xl w-full mx-auto flex-col gap-x-2">
       <div className=" max-md:min-h-[26rem]  xl:flex-row">
-        <MapButtons handleFullReset={handleFullReset} />
+        <MapButtons handleFullReset={handleFullReset} handleShareMap={handleShareMap}/>
         <MapElement
           partyAreas={partyAreas}
           partySeats={partySeats}
