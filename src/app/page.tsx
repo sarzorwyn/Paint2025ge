@@ -1,3 +1,4 @@
+import Footer from "@/components/pageFooter";
 import MapSemicircleContainer from "@/components/mapSemicircleContainer";
 
 
@@ -17,6 +18,7 @@ export default function Home() {
               <MapSemicircleContainer/>
           </div>
         </div>
+        <Footer/>
       </div>
     </div>
   );

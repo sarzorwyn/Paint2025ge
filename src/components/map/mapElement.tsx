@@ -55,9 +55,6 @@ const MapElement = ({
 
   useEffect(() => {
     mapRef.current = createMap(mapContainerRef.current!);
-    mapRef.current!.on("load", () => {
-      mapLoadProperties(mapRef.current!, fillColorExpression);
-    });
 
     const handleClickEmpty = (e: maplibregl.MapMouseEvent) => {
       const features = mapRef.current!.queryRenderedFeatures(e.point);
@@ -80,6 +77,12 @@ const MapElement = ({
       mapRef.current!.off("click", handleClickEmpty);
     };
   }, []);
+
+  useEffect(() => {
+    mapRef.current!.on("load", () => {
+      mapLoadProperties(mapRef.current!, fillColorExpression);
+    });
+  }, [fillColorExpression])
 
   useEffect(() => {
     let hoveredPolygonId: string | number | null = null;
