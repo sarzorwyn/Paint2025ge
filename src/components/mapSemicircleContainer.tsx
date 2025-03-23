@@ -9,28 +9,46 @@ import {
   vacantParty,
 } from "@/lib/politicalParties";
 import PartySeatTableContainer from "./partySeatTable";
-import { useRouter, useSearchParams } from "next/navigation";
+import { useRouter } from "next/navigation";
 import { getStateQuery, parseStateFromUrl } from "@/handler/parseStateFromUrl";
 import MapButtons from "./mapButtons/mapButtons";
 import { Skeleton } from "./ui/skeleton";
 
 const MapSemicircleElement = () => {
-  const searchParams = useSearchParams();
+  const [hashLoaded, setHashLoaded] = useState(false);
   const [partyAreas, setPartyAreas] = useState<Map<string, string | null>>(
-    parseStateFromUrl(
-      searchParams.get("partyAreas"),
-      constituencies.map(({ code }) => [code, null])
-    ) as Map<string, string | null>
+    new Map(constituencies.map(({ code }) => [code, null]))
   );
-  const [ncmpCount, setNcmpCount] = useState<Map<string, number>>(
-    parseStateFromUrl(searchParams.get("ncmpCount"), []) as Map<string, number>
-  );
+  const [ncmpCount, setNcmpCount] = useState<Map<string, number>>(new Map([]));
   const router = useRouter();
 
   useEffect(() => {
-    const query = getStateQuery(partyAreas, ncmpCount);
-    router.replace(`?${query.toString()}`, { scroll: false });
-  }, [partyAreas, ncmpCount, router]);
+    let hash = "";
+    if (typeof window !== "undefined" && window.location.hash) {
+      hash = window.location.hash;
+    }
+    const hashParams = new URLSearchParams(hash.replace("#", ""));
+
+    setPartyAreas(
+      parseStateFromUrl(
+        hashParams.get("partyAreas"),
+        constituencies.map(({ code }) => [code, null])
+      ) as Map<string, string | null>
+    );
+
+    setNcmpCount(
+      parseStateFromUrl(hashParams.get("ncmpCount"), []) as Map<string, number>
+    );
+
+    setHashLoaded(true);
+  }, []);
+
+  useEffect(() => {
+    if (hashLoaded) {
+      const query = getStateQuery(partyAreas, ncmpCount);
+      router.replace(`#${query.toString()}`, { scroll: false });
+    }
+  }, [partyAreas, ncmpCount, router, hashLoaded]);
 
   const partySeats: Map<string, number> = useMemo(() => {
     const partyToSeats = new Map<string, number>(

@@ -22,7 +22,7 @@ const copyToClipboard = async () => {
   try {
     await navigator.clipboard.writeText(window.location.href);
     toast.success("Link Copied!", {
-      description: "The URL has been copied to your clipboard.",
+      description: "The URL has been copied to your clipboard. Share this link to let others see your map!",
     });
   } catch (err) {
     toast.error("Failed to copy: ", {
