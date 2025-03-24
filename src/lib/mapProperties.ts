@@ -25,15 +25,18 @@ export const mapLoadProperties = (map: Map, fillColorExpression: DataDrivenPrope
         });
       }
 
-      map.addLayer({
-        id: "background-layer",
-        type: "background",
-        paint: {
-          "background-color": "#efefef",
-          "background-opacity": 1,
-        },
-      });
+      if (map.getLayer("background-layer") == null) {
+        map.addLayer({
+          id: "background-layer",
+          type: "background",
+          paint: {
+            "background-color": "#efefef",
+            "background-opacity": 1,
+          },
+        });
+      }
 
+      if (map.getLayer("elecBounds") == null) {
       map.addLayer({
         id: "elecBounds",
         type: "fill",
@@ -44,6 +47,9 @@ export const mapLoadProperties = (map: Map, fillColorExpression: DataDrivenPrope
           "fill-opacity": 1,
         },
       });
+    }
+
+    if (map.getLayer("outline") == null) {
 
       map.addLayer({
         id: "outline",
@@ -62,6 +68,7 @@ export const mapLoadProperties = (map: Map, fillColorExpression: DataDrivenPrope
           ],
         },
     });
+  }
 
     map.easeTo({
       zoom: 10.3,

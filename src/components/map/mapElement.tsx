@@ -33,12 +33,11 @@ const MapElement = ({
   const mapRef = useRef<maplibregl.Map>(null);
   const { x, y, tooltipRef } = useMouse<HTMLDivElement>();
   const selectedPolygonIdRef = useRef<null | string>(null);
+  const hoveredPolygonIdRef = useRef<null | string>(null);
   const [hoverId, setHoverId] = useState<string | null>(null);
   const [selectedParty, setSelectedParty] = useState<string | null>(null);
 
-  const fillColorExpression = useMemo<
-    DataDrivenPropertyValueSpecification<string>
-  >(
+  const fillColorExpression = useCallback(
     () =>
       [
         "match",
@@ -50,9 +49,11 @@ const MapElement = ({
       ] as unknown as ExpressionSpecification,
     [partyAreas]
   );
+    
 
   useEffect(() => {
     mapRef.current = createMap(mapContainerRef.current!);
+
 
     const handleClickEmpty = (e: maplibregl.MapMouseEvent) => {
       const features = mapRef.current!.queryRenderedFeatures(e.point);
@@ -77,26 +78,41 @@ const MapElement = ({
   }, []);
 
   useEffect(() => {
-    mapRef.current!.on("load", () => {
-      mapLoadProperties(mapRef.current!, fillColorExpression);
-    });
+    const map = mapRef.current;
+    if (!map) return;
 
-    if (mapRef.current?.loaded) {
-      try {
-        mapRef.current?.setPaintProperty(
-          "elecBounds",
-          "fill-color",
-          fillColorExpression
-        );
-      } catch (error) {
-        console.error("Failed to set paint property:", error);
+    const handleMapLoad = () => {
+      mapLoadProperties(map, fillColorExpression());
+    };
+  
+
+    map.on("load", handleMapLoad);
+    console.log(fillColorExpression)
+  
+    const updateFillColor = () => {
+      if (map.getLayer("elecBounds")) {
+        map.setPaintProperty("elecBounds", "fill-color", fillColorExpression());
+      } else {
+        console.warn("Layer 'elecBounds' not found.");
       }
+    };
+  
+    map.on("styledata", updateFillColor); // Listen for style reloads
+
+    if (map.isStyleLoaded()) {
+      updateFillColor();
+    } else {
+      setTimeout(updateFillColor, 500); // Try again after a delay
     }
+  
+    return () => {
+      map.off("load", handleMapLoad);
+      map.off("styledata", updateFillColor);
+    };
+
   }, [fillColorExpression]);
 
   useEffect(() => {
-    let hoveredPolygonId: string | number | null = null;
-
     if (selectedParty !== null) {
       mapRef.current!.getCanvas().style.cursor = "crosshair";
     } else {
@@ -111,15 +127,15 @@ const MapElement = ({
         } else {
           mapRef.current!.getCanvas().style.cursor = "crosshair";
         }
-        if (hoveredPolygonId !== null) {
+        if (hoveredPolygonIdRef.current !== null) {
           mapRef.current!.setFeatureState(
-            { source: "elecBoundsSource", id: hoveredPolygonId },
+            { source: "elecBoundsSource", id: hoveredPolygonIdRef.current },
             { hover: false }
           );
         }
-        hoveredPolygonId = features[0].id!;
+        hoveredPolygonIdRef.current = features[0].id as string;
         mapRef.current?.setFeatureState(
-          { source: "elecBoundsSource", id: hoveredPolygonId! },
+          { source: "elecBoundsSource", id: hoveredPolygonIdRef.current },
           { hover: true }
         );
 
@@ -135,13 +151,13 @@ const MapElement = ({
       } else {
         mapRef.current!.getCanvas().style.cursor = "crosshair";
       }
-      if (hoveredPolygonId !== null) {
+      if (hoveredPolygonIdRef.current !== null) {
         mapRef.current!.setFeatureState(
-          { source: "elecBoundsSource", id: hoveredPolygonId },
+          { source: "elecBoundsSource", id: hoveredPolygonIdRef.current },
           { hover: false }
         );
       }
-      hoveredPolygonId = null;
+      hoveredPolygonIdRef.current = null;
       setHoverId(null);
     };
 
