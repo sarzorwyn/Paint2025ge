@@ -1,7 +1,7 @@
 
 import { motion } from "framer-motion";
 
-const TableMotion = ({children}: { children: React.ReactNode }) => {
+const TableRowMotion = ({children}: { children: React.ReactNode }) => {
     return (
         <motion.tr
             layout
@@ -16,4 +16,4 @@ const TableMotion = ({children}: { children: React.ReactNode }) => {
     )
 }
 
-export default TableMotion;
+export default TableRowMotion;

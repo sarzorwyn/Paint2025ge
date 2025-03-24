@@ -8,10 +8,10 @@ import {
   politicalParties,
   vacantParty,
 } from "@/lib/politicalParties";
-import PartySeatTableContainer from "./partySeatTable";
+import PartySeatTableContainer from "./table/partySeatTable";
 import { useRouter, useSearchParams } from "next/navigation";
 import { getStateQuery, parseStateFromUrl } from "@/handler/parseStateFromUrl";
-import MapButtons from "./mapButtons/mapButtons";
+import MapButtons from "./mapButtons";
 import { Skeleton } from "./ui/skeleton";
 import { toast } from "sonner";
 

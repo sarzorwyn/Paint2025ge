@@ -1,0 +1,21 @@
+@import "tailwindcss";
+
+.partySeatHeader {
+    @apply font-semibold 
+}
+
+.partyNcmpHeader {
+    @apply font-semibold text-center w-15  sm:w-20  justify-end mr-10
+}
+
+.partyNcmpItemsBox {
+    @apply relative flex flex-row items-center gap-2 justify-between
+}
+
+.partyNcmpNumber {
+    @apply sm:w-2 inline-block pb-0.5
+}
+
+.partySeats {
+    @apply font-semibold text-right w-5  justify-end
+}

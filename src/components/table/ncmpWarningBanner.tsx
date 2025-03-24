@@ -1,7 +1,7 @@
 import { Alert, AlertDescription } from "@/components/ui/alert";
 import { maxNCMPs } from "@/lib/politicalParties";
 import { TriangleAlert } from "lucide-react";
-import FadeInMotion from "./ui/fadeInMotion";
+import FadeInMotion from "../ui/fadeInMotion";
 
 const WarningBanner = ({ partySeats, ncmpCount, oppositionSeatsCount }: {partySeats: Map<string, number>, ncmpCount: Map<string, number> | undefined, oppositionSeatsCount: number} ) => {
     const largestParty = Array.from(partySeats.entries())[0][0] === 'Vacant' ? Array.from(partySeats.entries())[1][0] : Array.from(partySeats.entries())[0][0];

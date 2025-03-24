@@ -8,14 +8,14 @@ import {
   AlertDialogTitle,
   AlertDialogCancel,
   AlertDialogAction,
-} from "../ui/alert-dialog";
-import { Button } from "../ui/button";
+} from "./ui/alert-dialog";
+import { Button } from "./ui/button";
 import { RotateCcw, Share } from "lucide-react";
 import {
   HoverCard,
   HoverCardTrigger,
   HoverCardContent,
-} from "../ui/hover-card";
+} from "./ui/hover-card";
 
 const ResetButton = ({ handleFullReset }: { handleFullReset: () => void }) => {
   return (

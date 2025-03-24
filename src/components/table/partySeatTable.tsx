@@ -1,8 +1,14 @@
 "use client";
 
 import { getTablePartyColor } from "@/handler/partyColorHandlers";
-import { Table, TableCell, TableHead, TableHeader, TableRow } from "./ui/table";
-import { Button } from "./ui/button";
+import {
+  Table,
+  TableCell,
+  TableHead,
+  TableHeader,
+  TableRow,
+} from "../ui/table";
+import { Button } from "../ui/button";
 import { SquarePlus, SquareMinus } from "lucide-react";
 import { cn } from "@/lib/utils";
 import WarningBanner from "./ncmpWarningBanner";
@@ -11,10 +17,21 @@ import {
   politicalParties,
   vacantParty,
 } from "@/lib/politicalParties";
-import TableMotion from "./ui/tableMotion";
+import TableRowMotion from "../ui/tableMotion";
 import { motion } from "framer-motion";
-import { HoverCard, HoverCardContent, HoverCardTrigger } from "./ui/hover-card";
-import PartyIcon from "./partyIcon";
+import {
+  HoverCard,
+  HoverCardContent,
+  HoverCardTrigger,
+} from "../ui/hover-card";
+import PartyIcon from "../partyIcon";
+import "./partySeatTable.css";
+
+const calcNcmpTotal = (ncmpCount: Map<string, number> | undefined) =>
+  ncmpCount ? Array.from(ncmpCount.values()).reduce((a, b) => a + b, 0) : 0;
+
+const calcSeatsTotal = (partySeats: Map<string, number> | undefined) =>
+  partySeats ? Array.from(partySeats.values()).reduce((a, b) => a + b, 0) : 0;
 
 const hasNoSeats = (
   partySeats: Map<string, number> | undefined,
@@ -31,8 +48,7 @@ const canAddNcmp = (
 ) =>
   oppositionSeatsCount < 12 &&
   party !== largestParty &&
-  (ncmpCount ? Array.from(ncmpCount.values()).reduce((a, b) => a + b, 0) : 0) <
-    maxNCMPs;
+  calcNcmpTotal(ncmpCount) < maxNCMPs;
 
 const PartyDetailsHover = ({ partyShortName }: { partyShortName: string }) => {
   const partyDetails = politicalParties.find(
@@ -50,7 +66,7 @@ const PartyDetailsHover = ({ partyShortName }: { partyShortName: string }) => {
           <span className="text-sm flex flex-col items-center space-x-2">
             <PartyIcon iconUrl={partyDetails.icon} />
             {partyDetails.fullname}
-          </span>{" "}
+          </span>
         </div>
       </HoverCardContent>
     </HoverCard>
@@ -75,32 +91,31 @@ const PartySeatTableBody = ({
       ? Array.from(partySeats.entries())[1][0]
       : Array.from(partySeats.entries())[0][0];
   return Array.from(partySeats).map(([party, seats]) => (
-    <TableMotion key={party}>
-      <TableCell
-        className={`font-semibold border-l-6 ${getTablePartyColor(party)} ${
+    <TableRowMotion key={party}>
+      <TableHead
+        className={`partySeatHeader border-l-6 ${getTablePartyColor(party)} ${
           hasNoSeats(partySeats, party) && "text-gray-400"
         }`}
       >
         <PartyDetailsHover partyShortName={party} />
-      </TableCell>
-      <TableCell className="font-semibold w-10 sm:w-20 ">
-        <div className="relative flex flex-row items-center gap-2 justify-between">
-        <Button
+      </TableHead>
+      <TableCell className="partyNcmpHeader">
+        <div className="partyNcmpItemsBox">
+          <Button
             variant="ghost"
-            className={`rounded ${
-              hasNoSeats(ncmpCount, party) && "opacity-0"
-            }`}
+            className={`rounded ${hasNoSeats(ncmpCount, party) && "opacity-0"}`}
             onClick={() => handleDecrement(party)}
           >
             <SquareMinus />
           </Button>
           <span
-            className={`sm:w-2 inline-block pb-0.5 ${
+            className={`partyNcmpNumber ${
               hasNoSeats(partySeats, party) && "text-gray-400"
             }`}
           >
             {ncmpCount?.get(party) || 0}
-          </span><Button
+          </span>
+          <Button
             disabled={
               !canAddNcmp(oppositionSeatsCount, party, largestParty, ncmpCount)
             }
@@ -121,17 +136,16 @@ const PartySeatTableBody = ({
               }`}
             />
           </Button>
-          
         </div>
       </TableCell>
       <TableCell
-        className={`font-semibold text-right ${
+        className={`partySeats  ${
           hasNoSeats(partySeats, party) && "text-gray-400"
         }`}
       >
         {seats}
       </TableCell>
-    </TableMotion>
+    </TableRowMotion>
   ));
 };
 
@@ -152,21 +166,27 @@ const PartySeatTable = ({
     <Table>
       <TableHeader>
         <TableRow>
-          <TableHead className="w-fit">Party</TableHead>
+          <TableHead className="partySeatHeader">Party</TableHead>
           <TableHead>
-            <div className="relative flex justify-end items-center gap-2 pr-7">
+            <div className="partyNcmpHeader">
               <HoverCard openDelay={200}>
-                <HoverCardTrigger tabIndex={0}>NCMPs</HoverCardTrigger>
+                <HoverCardTrigger tabIndex={0}>
+                  <div className="pl-7 sm:pl-10">NCMPs</div>
+                </HoverCardTrigger>
 
                 <HoverCardContent>
                   <div className="text-sm">
-                  Opposition candidates who lost in a general election but enter Parliament as the best-performing losers, 
-                  <span className="font-bold"> ensuring at least 12 opposition MPs in total.</span></div>
+                    Opposition candidates who lost in a general election but
+                    enter Parliament as the best-performing losers,
+                    <span className="font-bold">
+                      ensuring at least 12 opposition MPs in total.
+                    </span>
+                  </div>
                 </HoverCardContent>
               </HoverCard>
             </div>
           </TableHead>
-          <TableHead className="max-w-0.5 text-right">Seats</TableHead>
+          <TableHead className="partySeats">Seats</TableHead>
         </TableRow>
       </TableHeader>
       <motion.tbody className={cn("[&_tr:last-child]:border-0")}>
@@ -178,6 +198,25 @@ const PartySeatTable = ({
           handleDecrement,
         })}
       </motion.tbody>
+      <tfoot>
+        <TableRow key="totalsRow" className="border-t-2 border-t-black">
+          <TableHead className={`partySeatHeader `}>
+            Total
+          </TableHead>
+          <TableCell className="partyNcmpHeader">
+            <div className="partyNcmpItemsBox">
+              <div className="px-4" />
+              <span className="partyNcmpNumber">
+                {calcNcmpTotal(ncmpCount)}
+              </span>
+              <div className="px-4" />
+            </div>
+          </TableCell>
+          <TableCell className="partySeats">
+            {calcSeatsTotal(partySeats)}
+          </TableCell>
+        </TableRow>
+      </tfoot>
     </Table>
   );
 };
