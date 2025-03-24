@@ -3,12 +3,10 @@
 import React, {
   useCallback,
   useEffect,
-  useMemo,
   useRef,
   useState,
 } from "react";
 import maplibregl, {
-  DataDrivenPropertyValueSpecification,
   ExpressionSpecification,
 } from "maplibre-gl";
 import "maplibre-gl/dist/maplibre-gl.css";
@@ -87,7 +85,6 @@ const MapElement = ({
   
 
     map.on("load", handleMapLoad);
-    console.log(fillColorExpression)
   
     const updateFillColor = () => {
       if (map.getLayer("elecBounds")) {

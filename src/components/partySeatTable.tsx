@@ -83,14 +83,29 @@ const PartySeatTableBody = ({
       >
         <PartyDetailsHover partyShortName={party} />
       </TableCell>
-      <TableCell className="font-semibold ">
-        <div className="relative flex flex-row justify-end items-center gap-2">
-          <Button
+      <TableCell className="font-semibold w-10 sm:w-20 ">
+        <div className="relative flex flex-row items-center gap-2 justify-between">
+        <Button
+            variant="ghost"
+            className={`rounded ${
+              hasNoSeats(ncmpCount, party) && "opacity-0"
+            }`}
+            onClick={() => handleDecrement(party)}
+          >
+            <SquareMinus />
+          </Button>
+          <span
+            className={`sm:w-2 inline-block pb-0.5 ${
+              hasNoSeats(partySeats, party) && "text-gray-400"
+            }`}
+          >
+            {ncmpCount?.get(party) || 0}
+          </span><Button
             disabled={
               !canAddNcmp(oppositionSeatsCount, party, largestParty, ncmpCount)
             }
             variant="ghost"
-            className={`  rounded ${party === vacantParty && "invisible"}`}
+            className={`  rounded ${party === vacantParty && "opacity-0"}`}
             onClick={() => handleIncrement(party)}
           >
             <SquarePlus
@@ -106,22 +121,7 @@ const PartySeatTableBody = ({
               }`}
             />
           </Button>
-          <span
-            className={`sm:w-2 inline-block pb-0.5 ${
-              hasNoSeats(partySeats, party) && "text-gray-400"
-            }`}
-          >
-            {ncmpCount?.get(party) || 0}
-          </span>
-          <Button
-            variant="ghost"
-            className={`text-black rounded ${
-              hasNoSeats(ncmpCount, party) && "invisible"
-            }`}
-            onClick={() => handleDecrement(party)}
-          >
-            <SquareMinus />
-          </Button>
+          
         </div>
       </TableCell>
       <TableCell
