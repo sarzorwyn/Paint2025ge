@@ -35,6 +35,18 @@ const Footer = () => {
           About the Author
         </a>
       </div>
+      <div className="mt-10">
+        Special thanks to {" "}
+        <a
+          href="https://github.com/SmoothPelican"
+          className="text-gray-800 hover:underline"
+          target="_blank"
+          rel="noopener noreferrer"
+        >
+          @SmoothPelican
+        </a>
+        {" "}for data on new parties
+      </div>
     </footer>
   );
 };

@@ -22,6 +22,7 @@ const MapSemicircleElement = () => {
     new Map(constituencies.map(({ code }) => [code, null]))
   );
   const [ncmpCount, setNcmpCount] = useState<Map<string, number>>(new Map([]));
+  
   const router = useRouter();
 
   // Replace url if invalid on load
@@ -32,12 +33,16 @@ const MapSemicircleElement = () => {
     }
     const hashParams = new URLSearchParams(hash.replace("#", ""));
 
-    const getUrlPartyAreas = parseStateFromUrl(searchParams.get("partyAreas")) || parseStateFromUrl(hashParams.get("partyAreas"));
+    const getUrlPartyAreas =
+      parseStateFromUrl(searchParams.get("partyAreas")) ||
+      parseStateFromUrl(hashParams.get("partyAreas"));
     if (getUrlPartyAreas) {
       setPartyAreas(getUrlPartyAreas as Map<string, string | null>);
     }
 
-    const getUrlNcmpCount = parseStateFromUrl(searchParams.get("ncmpCount")) || parseStateFromUrl(hashParams.get("ncmpCount"));
+    const getUrlNcmpCount =
+      parseStateFromUrl(searchParams.get("ncmpCount")) ||
+      parseStateFromUrl(hashParams.get("ncmpCount"));
     if (getUrlNcmpCount) {
       setNcmpCount(getUrlNcmpCount as Map<string, number>);
     }
@@ -56,7 +61,6 @@ const MapSemicircleElement = () => {
       router.replace(`?#${query.toString()}`, { scroll: false });
     }
   }, [partyAreas, ncmpCount, router, hashLoaded]);
-
 
   const partySeats: Map<string, number> = useMemo(() => {
     const partyToSeats = new Map<string, number>(
@@ -144,7 +148,8 @@ const MapSemicircleElement = () => {
 
   const handleShareMap = useCallback(async () => {
     const query = getStateQuery(partyAreas, ncmpCount);
-    const generatedUrl =  window.location.origin + window.location.pathname + '?' + query
+    const generatedUrl =
+      window.location.origin + window.location.pathname + "?" + query;
 
     try {
       await navigator.clipboard.writeText(generatedUrl);
@@ -159,10 +164,24 @@ const MapSemicircleElement = () => {
     }
   }, [partyAreas, ncmpCount]);
 
+  const handleFillMap = (fillParty: string) => {
+    if (fillParty) {
+      setPartyAreas(
+        new Map(constituencies.map(({ code }) => [code, fillParty]))
+      );
+
+      setNcmpCount(new Map());
+    }
+  };
+
   return (
     <div className="relative flex  max-w-5xl w-full mx-auto flex-col gap-x-2">
       <div className=" max-md:min-h-[26rem]  xl:flex-row">
-        <MapButtons handleFullReset={handleFullReset} handleShareMap={handleShareMap}/>
+        <MapButtons
+          handleFullReset={handleFullReset}
+          handleShareMap={handleShareMap}
+          handleFillMap={handleFillMap}
+        />
         <MapElement
           partyAreas={partyAreas}
           partySeats={partySeats}
