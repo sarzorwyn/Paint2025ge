@@ -2,6 +2,7 @@ import type { Metadata } from "next";
 import { Geist, Barlow } from "next/font/google";
 import "./globals.css";
 import { Toaster } from "@/components/ui/sonner";
+import { Analytics } from "@vercel/analytics/react"
 
 const balowSans = Barlow({
   subsets: ['latin'],
@@ -30,6 +31,7 @@ export default function RootLayout({
         className={`${balowSans.className} ${geistSans.className}  antialiased`}
       >
         {children}
+        <Analytics/>
         <Toaster/>
       </body>
     </html>

@@ -12,7 +12,7 @@ export type PoliticalParty = {
 
 // Tailwind doesnt allow dynamic generation of classes, need to hardcode
 export const politicalParties: PoliticalParty[] = [
-    { name: "PAP", fullname: "People's Action Party", color: {bgColor: "bg-red-500", BorderLColor: "border-l-red-500", borderColor: "border-red-500", hex: "#fb2c36"} , icon: "/party_logos/papLogo.webp"},
+    { name: "PAP", fullname: "People's Action Party", color: {bgColor: "bg-[#d7445b]", BorderLColor: "border-l-[#d7445b]", borderColor: "border-[#d7445b]", hex: "#d7445b"} , icon: "/party_logos/papLogo.webp"},
     { name: "WP", fullname: "Workers' Party", color: {bgColor: "bg-[#93B3D4]", BorderLColor: "border-l-[#93B3D4]", borderColor: "border-[#93B3D4]", hex: "#93B3D4"}, icon: "/party_logos/wpLogo.webp"},
     { name: "PSP", fullname: "Progress Singapore Party", color: {bgColor: "bg-red-300", BorderLColor: "border-l-red-300", borderColor: "border-red-300", hex: "#ffa2a2"}, icon: "/party_logos/pspLogo.webp"},
     { name: "NSP", fullname: "National Solidarity Party",  color: {bgColor: "bg-[#FF924F]", BorderLColor: "border-l-[#FF924F]", borderColor: "border-[#FF924F]", hex: "#FF924F"}, icon: "/party_logos/nspLogo.svg"},
