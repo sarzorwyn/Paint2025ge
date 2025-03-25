@@ -34,8 +34,8 @@ const Footer = () => {
         >
           About the Author
         </a>
-      </div>
-      <div className="mt-10">
+        <br/>
+        
         Special thanks to {" "}
         <a
           href="https://github.com/SmoothPelican"
