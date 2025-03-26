@@ -50,7 +50,13 @@ const canAddNcmp = (
   party !== largestParty &&
   calcNcmpTotal(ncmpCount) < maxNCMPs;
 
-const PartyDetailsHover = ({ partyShortName }: { partyShortName: string }) => {
+const PartyDetailsHover = ({
+  children,
+  partyShortName,
+}: {
+  children?: React.ReactNode;
+  partyShortName: string;
+}) => {
   const partyDetails = politicalParties.find(
     ({ name }) => name === partyShortName
   );
@@ -60,7 +66,10 @@ const PartyDetailsHover = ({ partyShortName }: { partyShortName: string }) => {
 
   return (
     <HoverCard openDelay={100}>
-      <HoverCardTrigger tabIndex={0}>{partyShortName}</HoverCardTrigger>
+      <HoverCardTrigger tabIndex={0} className="relative">
+        {partyShortName}
+        {children}
+      </HoverCardTrigger>
       <HoverCardContent side="right" align="center" asChild>
         <div className="w-auto p-2 ">
           <span className="text-sm flex flex-col items-center space-x-2">
@@ -90,14 +99,30 @@ const PartySeatTableBody = ({
     Array.from(partySeats.entries())[0][0] === vacantParty
       ? Array.from(partySeats.entries())[1][0]
       : Array.from(partySeats.entries())[0][0];
+  const totalSeats = partySeats
+    ? Array.from(partySeats.values()).reduce((a, b) => a + b, 0)
+    : 0;
+
   return Array.from(partySeats).map(([party, seats]) => (
     <TableRowMotion key={party}>
       <TableHead
-        className={`partySeatHeader border-l-6 ${getTablePartyColor(party)} ${
-          hasNoSeats(partySeats, party) && "text-gray-400"
-        }`}
+        className={`partySeatHeader border-l-6 relative  ${getTablePartyColor(
+          party
+        )} ${hasNoSeats(partySeats, party) && "text-gray-400"}`}
       >
-        <PartyDetailsHover partyShortName={party} />
+        <PartyDetailsHover partyShortName={party}></PartyDetailsHover>
+        <motion.div
+          className="absolute left-0 top-1/4 h-1/2 bg-black opacity-10 pointer-events-none"
+          initial={{ width: 0 }}
+          animate={{
+            width: `${
+              ((partySeats.has(party) ? partySeats.get(party)! : 0) /
+                totalSeats) *
+              100
+            }%`,
+          }}
+          transition={{ duration: 0.5, ease: "easeOut" }}
+        />
       </TableHead>
       <TableCell className="partyNcmpHeader">
         <div className="partyNcmpItemsBox">
@@ -200,9 +225,7 @@ const PartySeatTable = ({
       </motion.tbody>
       <tfoot>
         <TableRow key="totalsRow" className="border-t-2 border-t-black">
-          <TableHead className={`partySeatHeader `}>
-            Total
-          </TableHead>
+          <TableHead className={`partySeatHeader `}>Total</TableHead>
           <TableCell className="partyNcmpHeader">
             <div className="partyNcmpItemsBox">
               <div className="px-4" />
