@@ -11,7 +11,6 @@ import {
 import { Button } from "../ui/button";
 import { SquarePlus, SquareMinus } from "lucide-react";
 import { cn } from "@/lib/utils";
-import WarningBanner from "./ncmpWarningBanner";
 import {
   maxNCMPs,
   politicalParties,
@@ -244,35 +243,4 @@ const PartySeatTable = ({
   );
 };
 
-const PartySeatTableContainer = ({
-  partySeats,
-  ncmpCount,
-  oppositionSeatsCount,
-  handleIncrement,
-  handleDecrement,
-}: {
-  partySeats: Map<string, number>;
-  ncmpCount: Map<string, number> | undefined;
-  oppositionSeatsCount: number;
-  handleIncrement: (party: string) => void;
-  handleDecrement: (party: string) => void;
-}) => {
-  return (
-    <>
-      <WarningBanner
-        partySeats={partySeats}
-        ncmpCount={ncmpCount}
-        oppositionSeatsCount={oppositionSeatsCount}
-      />
-      <PartySeatTable
-        partySeats={partySeats}
-        ncmpCount={ncmpCount}
-        oppositionSeatsCount={oppositionSeatsCount}
-        handleIncrement={handleIncrement}
-        handleDecrement={handleDecrement}
-      />
-    </>
-  );
-};
-
-export default PartySeatTableContainer;
+export default PartySeatTable;

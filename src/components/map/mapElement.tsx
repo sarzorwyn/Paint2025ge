@@ -1,39 +1,43 @@
 "use client";
 
-import React, {
-  useCallback,
-  useEffect,
-  useRef,
-  useState,
-} from "react";
-import maplibregl, {
-  ExpressionSpecification,
-} from "maplibre-gl";
+import React, { useCallback, useEffect, useRef, useState } from "react";
+import maplibregl, { ExpressionSpecification } from "maplibre-gl";
 import "maplibre-gl/dist/maplibre-gl.css";
-import * as TooltipPrimitive from "@radix-ui/react-tooltip";
-import { useMouse } from "../../lib/useMouse";
-import MapLegend from "./mapLegend";
 import CirclePicker from "./circlePicker";
-import { handleMapClick, getHoverDesc } from "@/handler/mapHandlers";
-import { getHexPartyColor, getHoverColor } from "@/handler/partyColorHandlers";
+import { handleMapClick } from "@/handler/mapHandlers";
+import { getHexPartyColor } from "@/handler/partyColorHandlers";
 import { createMap, mapLoadProperties } from "@/lib/mapProperties";
+import * as TooltipPrimitive from "@radix-ui/react-tooltip";
+
+import MapTooltip from "./mapTooltip";
+
+const MapContainer = ({
+  mapContainerRef,
+}: {
+  mapContainerRef: React.RefObject<HTMLDivElement | null>;
+}) => {
+  return (
+    <div id="map" ref={mapContainerRef} className="absolute w-full h-full" />
+  );
+};
 
 const MapElement = ({
+  children,
   updateArea,
   partyAreas,
-  partySeats,
 }: {
+  children?: React.ReactNode;
   updateArea: (areaId: string, party: string) => void;
   partyAreas: Map<string, string | null>;
-  partySeats: Map<string, number>;
 }): React.JSX.Element => {
   const mapContainerRef = useRef<HTMLDivElement>(null);
   const mapRef = useRef<maplibregl.Map>(null);
-  const { x, y, tooltipRef } = useMouse<HTMLDivElement>();
+  // const { x, y, tooltipRef } = useMouse<HTMLDivElement>();
   const selectedPolygonIdRef = useRef<null | string>(null);
   const hoveredPolygonIdRef = useRef<null | string>(null);
   const [hoverId, setHoverId] = useState<string | null>(null);
   const [selectedParty, setSelectedParty] = useState<string | null>(null);
+  const tooltipRef = useRef<HTMLDivElement>(null); // Use ref to store the element
 
   const fillColorExpression = useCallback(
     () =>
@@ -47,11 +51,9 @@ const MapElement = ({
       ] as unknown as ExpressionSpecification,
     [partyAreas]
   );
-    
 
   useEffect(() => {
     mapRef.current = createMap(mapContainerRef.current!);
-
 
     const handleClickEmpty = (e: maplibregl.MapMouseEvent) => {
       const features = mapRef.current!.queryRenderedFeatures(e.point);
@@ -82,10 +84,9 @@ const MapElement = ({
     const handleMapLoad = () => {
       mapLoadProperties(map, fillColorExpression());
     };
-  
 
     map.on("load", handleMapLoad);
-  
+
     const updateFillColor = () => {
       if (map.getLayer("elecBounds")) {
         map.setPaintProperty("elecBounds", "fill-color", fillColorExpression());
@@ -93,7 +94,7 @@ const MapElement = ({
         console.warn("Layer 'elecBounds' not found.");
       }
     };
-  
+
     map.on("styledata", updateFillColor); // Listen for style reloads
 
     if (map.isStyleLoaded()) {
@@ -101,12 +102,11 @@ const MapElement = ({
     } else {
       setTimeout(updateFillColor, 500); // Try again after a delay
     }
-  
+
     return () => {
       map.off("load", handleMapLoad);
       map.off("styledata", updateFillColor);
     };
-
   }, [fillColorExpression]);
 
   useEffect(() => {
@@ -179,7 +179,7 @@ const MapElement = ({
       mapRef.current?.off("mouseleave", "elecBounds", handleMouseLeave);
       mapRef.current?.off("click", "elecBounds", handleClickMap);
     };
-  }, [selectedParty, updateArea]);
+  }, [selectedParty, setHoverId, updateArea]);
 
   const handlePickerSelect = useCallback(
     (e: React.MouseEvent<Element, MouseEvent>) => {
@@ -194,45 +194,28 @@ const MapElement = ({
 
   return (
     <TooltipPrimitive.TooltipProvider>
-      <TooltipPrimitive.Tooltip delayDuration={0} open={hoverId !== null}>
-        <div>
-          <div
-            id="rectMapContainer"
-            ref={tooltipRef}
-            className="relative w-full h-[60vh] max-w-5xl mx-auto my-8 rounded-2xl shadow-sm overflow-hidden"
-          >
-            <MapLegend partySeats={partySeats} />
-            <CirclePicker
-              onSelect={handlePickerSelect}
-              selectedParty={selectedParty}
-            />
-            <TooltipPrimitive.TooltipTrigger asChild>
-              <div
-                id="map"
-                ref={mapContainerRef}
-                className="absolute w-full h-full"
-              />
-            </TooltipPrimitive.TooltipTrigger>
-          </div>
-          <TooltipPrimitive.TooltipContent
-            align="start"
-            alignOffset={x}
-            sideOffset={-y + 3}
-            hideWhenDetached
-            className={`shadow-md rounded`}
-          >
-            <div
-              className={`bg-white p-1 px-2 rounded  overflow-hidden border-l-5 ${getHoverColor(
-                selectedParty,
-                hoverId,
-                partyAreas
-              )}`}
-            >
-              {getHoverDesc(hoverId)}
-            </div>
-          </TooltipPrimitive.TooltipContent>
+      <div
+        id="rectMapContainer"
+        ref={tooltipRef}
+        className="relative w-full h-[60vh] max-w-5xl mx-auto my-8 rounded-2xl shadow-sm overflow-hidden"
+      >
+        {children}
+        <MapContainer mapContainerRef={mapContainerRef} />
+
+        <CirclePicker
+          selectedParty={selectedParty}
+          onSelect={handlePickerSelect}
+        />
+        <div className="absolute top-0 left-0 w-full h-full pointer-events-none">
+          <MapTooltip
+            hoverId={hoverId}
+            tooltipRef={tooltipRef}
+            selectedParty={selectedParty}
+            partyAreas={partyAreas}
+          />
         </div>
-      </TooltipPrimitive.Tooltip>
+        <div className="absolute top-0 left-0 w-full h-full pointer-events-none"></div>
+      </div>
     </TooltipPrimitive.TooltipProvider>
   );
 };

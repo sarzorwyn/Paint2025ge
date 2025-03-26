@@ -8,12 +8,14 @@ import {
   politicalParties,
   vacantParty,
 } from "@/lib/politicalParties";
-import PartySeatTableContainer from "./table/partySeatTable";
 import { useRouter, useSearchParams } from "next/navigation";
 import { getStateQuery, parseStateFromUrl } from "@/handler/parseStateFromUrl";
 import MapButtons from "./mapButtons";
 import { Skeleton } from "./ui/skeleton";
 import { toast } from "sonner";
+import MapLegend from "./map/mapLegend";
+import WarningBanner from "./table/ncmpWarningBanner";
+import PartySeatTable from "./table/partySeatTable";
 
 const MapSemicircleElement = () => {
   const searchParams = useSearchParams();
@@ -22,7 +24,7 @@ const MapSemicircleElement = () => {
     new Map(constituencies.map(({ code }) => [code, null]))
   );
   const [ncmpCount, setNcmpCount] = useState<Map<string, number>>(new Map([]));
-  
+
   const router = useRouter();
 
   // Replace url if invalid on load
@@ -182,15 +184,18 @@ const MapSemicircleElement = () => {
           handleShareMap={handleShareMap}
           handleFillMap={handleFillMap}
         />
-        <MapElement
-          partyAreas={partyAreas}
-          partySeats={partySeats}
-          updateArea={updateArea}
-        />
+        <MapElement partyAreas={partyAreas} updateArea={updateArea}>
+          <MapLegend partySeats={partySeats} />
+        </MapElement>
       </div>
 
       <div className="flex justify-center mt-5  flex-col">
-        <PartySeatTableContainer
+        <WarningBanner
+          partySeats={partySeats}
+          ncmpCount={ncmpCount}
+          oppositionSeatsCount={oppositionSeatsCount}
+        />
+        <PartySeatTable
           partySeats={partySeats}
           ncmpCount={ncmpCount}
           oppositionSeatsCount={oppositionSeatsCount}
