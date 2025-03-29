@@ -49,6 +49,19 @@ const canAddNcmp = (
   party !== largestParty &&
   calcNcmpTotal(ncmpCount) < maxNCMPs;
 
+const NcmpInfoTooltip = () => (
+  <HoverCard openDelay={200}>
+    <HoverCardTrigger tabIndex={0} className="pl-7 sm:pl-10">NCMPs</HoverCardTrigger>
+    <HoverCardContent>
+      <div className="text-sm">
+        Opposition candidates who lost in a general election but enter Parliament as the best-performing losers,
+        <span className="font-bold"> ensuring at least 12 opposition MPs in total.</span>
+      </div>
+    </HoverCardContent>
+  </HoverCard>
+);
+  
+
 const PartyDetailsHover = ({
   children,
   partyShortName,
@@ -193,21 +206,7 @@ const PartySeatTable = ({
           <TableHead className="partySeatHeader">Party</TableHead>
           <TableHead>
             <div className="partyNcmpHeader">
-              <HoverCard openDelay={200}>
-                <HoverCardTrigger tabIndex={0}>
-                  <div className="pl-7 sm:pl-10">NCMPs</div>
-                </HoverCardTrigger>
-
-                <HoverCardContent>
-                  <div className="text-sm">
-                    Opposition candidates who lost in a general election but
-                    enter Parliament as the best-performing losers,
-                    <span className="font-bold">
-                      ensuring at least 12 opposition MPs in total.
-                    </span>
-                  </div>
-                </HoverCardContent>
-              </HoverCard>
+              <NcmpInfoTooltip />
             </div>
           </TableHead>
           <TableHead className="partySeats">Seats</TableHead>
@@ -223,20 +222,16 @@ const PartySeatTable = ({
         })}
       </motion.tbody>
       <tfoot>
-        <TableRow key="totalsRow" className="border-t-2 border-t-black">
-          <TableHead className={`partySeatHeader `}>Total</TableHead>
+      <TableRow className="border-t-2 border-t-black">
+        <TableHead className={`partySeatHeader `}>Total</TableHead>
           <TableCell className="partyNcmpHeader">
-            <div className="partyNcmpItemsBox">
+            <div className="partyNcmpItemsBox flex justify-between w-full">
               <div className="px-4" />
-              <span className="partyNcmpNumber">
-                {calcNcmpTotal(ncmpCount)}
-              </span>
+              <span className="partyNcmpNumber">{calcNcmpTotal(ncmpCount)}</span>
               <div className="px-4" />
             </div>
           </TableCell>
-          <TableCell className="partySeats">
-            {calcSeatsTotal(partySeats)}
-          </TableCell>
+          <TableCell className="partySeats">{calcSeatsTotal(partySeats)}</TableCell>
         </TableRow>
       </tfoot>
     </Table>
