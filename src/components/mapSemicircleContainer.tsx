@@ -16,6 +16,7 @@ import { toast } from "sonner";
 import MapLegend from "./map/mapLegend";
 import WarningBanner from "./table/ncmpWarningBanner";
 import PartySeatTable from "./table/partySeatTable";
+import CirclePicker from "./map/circlePicker";
 
 const MapSemicircleElement = () => {
   const searchParams = useSearchParams();
@@ -24,6 +25,7 @@ const MapSemicircleElement = () => {
     new Map(constituencies.map(({ code }) => [code, null]))
   );
   const [ncmpCount, setNcmpCount] = useState<Map<string, number>>(new Map([]));
+  const [selectedParty, setSelectedParty] = useState<string | null>(null);
 
   const router = useRouter();
 
@@ -176,6 +178,13 @@ const MapSemicircleElement = () => {
     }
   };
 
+  const updateSelectedParty = useCallback(
+    (party: string | null) => {
+      setSelectedParty(party);
+    },
+    []
+  );
+
   return (
     <div className="relative flex  max-w-5xl w-full mx-auto flex-col gap-x-2">
       <div className=" max-md:min-h-[26rem]  xl:flex-row">
@@ -184,8 +193,12 @@ const MapSemicircleElement = () => {
           handleShareMap={handleShareMap}
           handleFillMap={handleFillMap}
         />
-        <MapElement partyAreas={partyAreas} updateArea={updateArea}>
+        <MapElement partyAreas={partyAreas} updateArea={updateArea} selectedParty={selectedParty} updateSelectedParty={updateSelectedParty}>
           <MapLegend partySeats={partySeats} />
+          <CirclePicker
+            selectedParty={selectedParty}
+            updateSelectedParty={updateSelectedParty}
+          />
         </MapElement>
       </div>
 

@@ -3,7 +3,6 @@
 import React, { useCallback, useEffect, useRef, useState } from "react";
 import maplibregl, { ExpressionSpecification } from "maplibre-gl";
 import "maplibre-gl/dist/maplibre-gl.css";
-import CirclePicker from "./circlePicker";
 import { handleMapClick } from "@/handler/mapHandlers";
 import { getHexPartyColor } from "@/handler/partyColorHandlers";
 import { createMap, mapLoadProperties } from "@/lib/mapProperties";
@@ -25,18 +24,20 @@ const MapElement = ({
   children,
   updateArea,
   partyAreas,
+  selectedParty,
+  updateSelectedParty,
 }: {
   children?: React.ReactNode;
   updateArea: (areaId: string, party: string) => void;
   partyAreas: Map<string, string | null>;
+  selectedParty: string | null;
+  updateSelectedParty: (party: string | null) => void;
 }): React.JSX.Element => {
   const mapContainerRef = useRef<HTMLDivElement>(null);
   const mapRef = useRef<maplibregl.Map>(null);
-  // const { x, y, tooltipRef } = useMouse<HTMLDivElement>();
   const selectedPolygonIdRef = useRef<null | string>(null);
   const hoveredPolygonIdRef = useRef<null | string>(null);
   const [hoverId, setHoverId] = useState<string | null>(null);
-  const [selectedParty, setSelectedParty] = useState<string | null>(null);
   const tooltipRef = useRef<HTMLDivElement>(null); // Use ref to store the element
 
   const fillColorExpression = useCallback(
@@ -54,12 +55,14 @@ const MapElement = ({
 
   useEffect(() => {
     mapRef.current = createMap(mapContainerRef.current!);
+  }, []);
 
+  useEffect(() => {
     const handleClickEmpty = (e: maplibregl.MapMouseEvent) => {
       const features = mapRef.current!.queryRenderedFeatures(e.point);
       // If no features were clicked, it means the background was clicked
       if (features.length === 0) {
-        setSelectedParty(null);
+        updateSelectedParty(null);
         if (selectedPolygonIdRef.current !== null) {
           mapRef.current!.setFeatureState(
             { source: "elecBoundsSource", id: selectedPolygonIdRef.current },
@@ -75,7 +78,7 @@ const MapElement = ({
     return () => {
       mapRef.current!.off("click", handleClickEmpty);
     };
-  }, []);
+  }, [updateSelectedParty])
 
   useEffect(() => {
     const map = mapRef.current;
@@ -181,17 +184,6 @@ const MapElement = ({
     };
   }, [selectedParty, setHoverId, updateArea]);
 
-  const handlePickerSelect = useCallback(
-    (e: React.MouseEvent<Element, MouseEvent>) => {
-      if (e.currentTarget == null) {
-        setSelectedParty(null);
-      } else {
-        setSelectedParty(e.currentTarget.id);
-      }
-    },
-    []
-  );
-
   return (
     <TooltipPrimitive.TooltipProvider>
       <div
@@ -201,11 +193,6 @@ const MapElement = ({
       >
         {children}
         <MapContainer mapContainerRef={mapContainerRef} />
-
-        <CirclePicker
-          selectedParty={selectedParty}
-          onSelect={handlePickerSelect}
-        />
         <div className="absolute top-0 left-0 w-full h-full pointer-events-none">
           <MapTooltip
             hoverId={hoverId}
