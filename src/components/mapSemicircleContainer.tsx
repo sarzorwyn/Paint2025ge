@@ -17,12 +17,13 @@ import MapLegend from "./map/mapLegend";
 import WarningBanner from "./table/ncmpWarningBanner";
 import PartySeatTable from "./table/partySeatTable";
 import CirclePicker from "./map/circlePicker";
+import { getDefaultResult } from "@/lib/defaultResult";
 
 const MapSemicircleElement = () => {
   const searchParams = useSearchParams();
   const [hashLoaded, setHashLoaded] = useState(false);
   const [partyAreas, setPartyAreas] = useState<Map<string, string | null>>(
-    new Map(constituencies.map(({ code }) => [code, null]))
+    getDefaultResult()
   );
   const [ncmpCount, setNcmpCount] = useState<Map<string, number>>(new Map([]));
   const [selectedParty, setSelectedParty] = useState<string | null>(null);
@@ -146,7 +147,7 @@ const MapSemicircleElement = () => {
   }, []);
 
   const handleFullReset = () => {
-    setPartyAreas(new Map(constituencies.map(({ code }) => [code, null])));
+    setPartyAreas(getDefaultResult());
     setNcmpCount(new Map());
   };
 
