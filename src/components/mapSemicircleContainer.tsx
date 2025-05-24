@@ -17,15 +17,15 @@ import MapLegend from "./map/mapLegend";
 import WarningBanner from "./table/ncmpWarningBanner";
 import PartySeatTable from "./table/partySeatTable";
 import CirclePicker from "./map/circlePicker";
-import { getDefaultResult } from "@/lib/defaultResult";
+import { getDefaultAreaResult, getDefaultNCMPResult } from "@/lib/defaultResult";
 
 const MapSemicircleElement = () => {
   const searchParams = useSearchParams();
   const [hashLoaded, setHashLoaded] = useState(false);
   const [partyAreas, setPartyAreas] = useState<Map<string, string | null>>(
-    getDefaultResult()
+    getDefaultAreaResult()
   );
-  const [ncmpCount, setNcmpCount] = useState<Map<string, number>>(new Map([]));
+  const [ncmpCount, setNcmpCount] = useState<Map<string, number>>(getDefaultNCMPResult());
   const [selectedParty, setSelectedParty] = useState<string | null>(null);
 
   const router = useRouter();
@@ -147,8 +147,8 @@ const MapSemicircleElement = () => {
   }, []);
 
   const handleFullReset = () => {
-    setPartyAreas(getDefaultResult());
-    setNcmpCount(new Map());
+    setPartyAreas(getDefaultAreaResult());
+    setNcmpCount(getDefaultNCMPResult());
   };
 
   const handleShareMap = useCallback(async () => {
@@ -189,6 +189,7 @@ const MapSemicircleElement = () => {
   return (
     <div className="relative flex  max-w-5xl w-full mx-auto flex-col gap-x-2">
       <div className=" max-md:min-h-[26rem]  xl:flex-row">
+
         <MapButtons
           handleFullReset={handleFullReset}
           handleShareMap={handleShareMap}
