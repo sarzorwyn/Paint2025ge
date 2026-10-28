@@ -1,10 +1,10 @@
 import { constituencies } from "@/lib/constituencies";
-import { Map } from "maplibre-gl";
+import { Map, type MapLayerMouseEvent } from "maplibre-gl";
 
 export const handleMapClick = (
   map: Map,
   selectedParty: string | null,
-  e: maplibregl.MapLayerMouseEvent,
+  e: MapLayerMouseEvent,
   selectedPolygonId: string | null
 ) => {
   let newSelectedPolygonId: string | null = null;
