@@ -39,15 +39,15 @@ const MapSemicircleElement = () => {
     const hashParams = new URLSearchParams(hash.replace("#", ""));
 
     const getUrlPartyAreas =
-      parseStateFromUrl(searchParams.get("partyAreas")) ||
-      parseStateFromUrl(hashParams.get("partyAreas"));
+      parseStateFromUrl(searchParams.get("partyAreas"), "partyAreas") ||
+      parseStateFromUrl(hashParams.get("partyAreas"), "partyAreas");
     if (getUrlPartyAreas) {
       setPartyAreas(getUrlPartyAreas as Map<string, string | null>);
     }
 
     const getUrlNcmpCount =
-      parseStateFromUrl(searchParams.get("ncmpCount")) ||
-      parseStateFromUrl(hashParams.get("ncmpCount"));
+      parseStateFromUrl(searchParams.get("ncmpCount"), "ncmpCount") ||
+      parseStateFromUrl(hashParams.get("ncmpCount"), "ncmpCount");
     if (getUrlNcmpCount) {
       setNcmpCount(getUrlNcmpCount as Map<string, number>);
     }

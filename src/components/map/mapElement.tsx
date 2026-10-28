@@ -1,7 +1,8 @@
 "use client";
 
 import React, { useCallback, useEffect, useRef, useState } from "react";
-import maplibregl, { ExpressionSpecification } from "maplibre-gl";
+import * as maplibregl from "maplibre-gl";
+import type { ExpressionSpecification } from "maplibre-gl";
 import "maplibre-gl/dist/maplibre-gl.css";
 import { handleMapClick } from "@/handler/mapHandlers";
 import { getHexPartyColor } from "@/handler/partyColorHandlers";

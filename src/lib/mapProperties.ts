@@ -1,7 +1,7 @@
-import maplibregl, { DataDrivenPropertyValueSpecification, Map } from "maplibre-gl";
+import { Map, type DataDrivenPropertyValueSpecification } from "maplibre-gl";
 
 export const createMap = (mapContainer: HTMLDivElement) => (
-    new maplibregl.Map({
+    new Map({
         container: mapContainer,
         style: {
           version: 8,
