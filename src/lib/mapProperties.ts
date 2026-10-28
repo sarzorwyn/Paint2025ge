@@ -1,4 +1,7 @@
-import { Map, type DataDrivenPropertyValueSpecification } from "maplibre-gl";
+import { Map, setWorkerUrl, type DataDrivenPropertyValueSpecification } from "maplibre-gl";
+
+// MapLibre v6 workers need an explicit URL so Next.js emits the worker asset.
+setWorkerUrl(new URL("maplibre-gl/dist/maplibre-gl-worker.mjs", import.meta.url).toString());
 
 export const createMap = (mapContainer: HTMLDivElement) => (
     new Map({
